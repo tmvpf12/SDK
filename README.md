@@ -2,9 +2,6 @@
 My old assemblies converted to the new SDK.
 
 #To-do list:
-
-# ElBundle
-
 - Singed
 - Varus
 - Kalista 
@@ -18,9 +15,6 @@ My old assemblies converted to the new SDK.
 - Katarina
 - Vi
 - Ekko
-
-# ElEasy AiO
-
 - Taric
 - Leona
 - Sona
@@ -30,9 +24,6 @@ My old assemblies converted to the new SDK.
 - Katarina
 - Ryze
 - Cassiopeia
-
-# ElOthers
-
 - Rengar
 - Vladimir
 - Nami
