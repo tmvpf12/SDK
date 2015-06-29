@@ -46,6 +46,15 @@
                 case OrbwalkerMode.Orbwalk:
                     DoCombo();
                     break;
+
+                case OrbwalkerMode.LastHit:
+                    break;
+
+                case OrbwalkerMode.LaneClear:
+                    break;
+
+                case OrbwalkerMode.Hybrid:
+                    break;
             }
         }
 
