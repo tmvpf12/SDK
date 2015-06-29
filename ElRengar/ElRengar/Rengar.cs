@@ -39,6 +39,18 @@
         {
         }
 
+        private static void DoHybrid()
+        {
+        }
+
+        private static void DoLaneClear()
+        {
+        }
+
+        private static void DoLastHit()
+        {
+        }
+
         private static void OnUpdate(EventArgs args)
         {
             switch (Orbwalker.ActiveMode)
@@ -48,12 +60,15 @@
                     break;
 
                 case OrbwalkerMode.LastHit:
+                    DoLastHit();
                     break;
 
                 case OrbwalkerMode.LaneClear:
+                    DoLaneClear();
                     break;
 
                 case OrbwalkerMode.Hybrid:
+                    DoHybrid();
                     break;
             }
         }
