@@ -1,17 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LeagueSharp;
-
-namespace ElRengar
+﻿namespace ElRengar
 {
-    class Program
-    {
-        static void Main(string[] args)
-        {
+    using System;
 
+    using ElRengar.Config;
+
+    using LeagueSharp.SDK.Core.Events;
+
+    internal class Program : Standards
+    {
+        #region Methods
+
+        private static void Main(string[] args)
+        {
+            if (args != null)
+            {
+                if (Player.ChampionName != "Rengar")
+                {
+                    Console.WriteLine("Champion is not supported.");
+                    return;
+                }
+
+                try
+                {
+                    Load.OnLoad += Rengar.OnLoad;
+                    Console.WriteLine("Rengar loaded.");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+            }
         }
+
+        #endregion
     }
 }
