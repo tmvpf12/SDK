@@ -43,13 +43,31 @@ namespace ElRengar.Config
     {
         #region Static Fields
 
+        public static int LeapRange = 775;
+
+        public static bool IsVisible = true;
+
         private static Menu menu;
 
         #endregion
 
-        #region Properties
+        #region Public Properties
 
-        public static Obj_AI_Hero Player { get; set; }
+        public static int Ferocity
+        {
+            get
+            {
+                return (int)ObjectManager.Player.Mana;
+            }
+        }
+
+        public static Obj_AI_Hero Player
+        {
+            get
+            {
+                return ObjectManager.Player;
+            }
+        }
 
         #endregion
 
@@ -57,9 +75,8 @@ namespace ElRengar.Config
 
         protected static void CreateMenu()
         {
-            Bootstrap.Init(new[] { "" }); //blabla
-
             menu = new Menu("ElRengar", "ElRengar", true);
+            Bootstrap.Init(new string[] { }); //blabla
 
             var comboMenu = menu.Add(new Menu("Combo settings", "Combo settings"));
             {
@@ -67,7 +84,7 @@ namespace ElRengar.Config
                 comboMenu.Add(new MenuBool("combo.spell.q", "Use Q", true));
                 comboMenu.Add(new MenuBool("combo.spell.w", "Use W", true));
                 comboMenu.Add(new MenuBool("combo.spell.e", "Use E", true));
-                comboMenu.Add(new MenuBool("combo.spell.e.outofrange", "Use E out of range", false));
+                comboMenu.Add(new MenuBool("combo.spell.e.outofrange", "Use E out of range"));
                 comboMenu.Add(new MenuSeparator("Miscellaneous", "Miscellaneous"));
                 comboMenu.Add(new MenuBool("combo.spell.ignite", "Use ignite", true));
                 comboMenu.Add(new MenuBool("combo.spell.smite", "Use smite", true));
