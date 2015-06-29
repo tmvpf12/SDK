@@ -14,12 +14,6 @@
         {
             if (args != null)
             {
-                if (Player.ChampionName != "Rengar")
-                {
-                    Console.WriteLine("Champion is not supported.");
-                    return;
-                }
-
                 try
                 {
                     Load.OnLoad += Rengar.OnLoad;

@@ -49,13 +49,7 @@ namespace ElRengar.Config
 
         #region Properties
 
-        protected static Obj_AI_Hero Player
-        {
-            get
-            {
-                return GameObjects.Player;
-            }
-        }
+        public static Obj_AI_Hero Player { get; set; }
 
         #endregion
 
