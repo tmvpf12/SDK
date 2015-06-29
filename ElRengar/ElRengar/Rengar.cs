@@ -9,6 +9,7 @@
     using LeagueSharp.SDK.Core;
     using LeagueSharp.SDK.Core.Enumerations;
     using LeagueSharp.SDK.Core.Extensions;
+    using LeagueSharp.SDK.Core.UI.IMenu.Values;
     using LeagueSharp.SDK.Core.Wrappers;
 
     internal class Rengar : Standards
@@ -16,12 +17,12 @@
         #region Static Fields
 
         public static Dictionary<Spells, Spell> spells = new Dictionary<Spells, Spell>()
-        {
-            { Spells.Q, new Spell(SpellSlot.Q, 300) },
-            { Spells.W, new Spell(SpellSlot.W, 500) },
-            { Spells.E, new Spell(SpellSlot.E, 1000) },
-            { Spells.R, new Spell(SpellSlot.R, 2000) }
-        };
+                                                             {
+                                                                 { Spells.Q, new Spell(SpellSlot.Q, 300) },
+                                                                 { Spells.W, new Spell(SpellSlot.W, 500) },
+                                                                 { Spells.E, new Spell(SpellSlot.E, 1000) },
+                                                                 { Spells.R, new Spell(SpellSlot.R, 2000) }
+                                                             };
 
         #endregion
 
@@ -40,7 +41,7 @@
                 CreateMenu();
                 CalculateRange();
                 Visibility();
-                Game.OnUpdate += OnUpdate;               
+                Game.OnUpdate += OnUpdate;
                 spells[Spells.E].SetSkillshot(0.25f, 70f, 1500f, true, SkillshotType.SkillshotLine);
             }
             catch (Exception ex)
@@ -77,6 +78,7 @@
 
         private static void DoCombo()
         {
+           
             var target = TargetSelector.GetTarget();
             if (target == null || !target.IsValidTarget())
             {
@@ -87,6 +89,10 @@
             {
                 return;
             }
+
+            var useQ = menu["combo.settings"]["combo.spell.q"].GetValue<MenuBool>().Value;
+            var useW = menu["combo.settings"]["combo.spell.w"].GetValue<MenuBool>().Value;
+            var useE = menu["combo.settings"]["combo.spell.e"].GetValue<MenuBool>().Value;
 
             if (Ferocity <= 4)
             {
@@ -151,7 +157,7 @@
             {
                 case OrbwalkerMode.Orbwalk:
                     DoCombo();
-                    Console.WriteLine(Ferocity);
+                    //Console.WriteLine(Ferocity);
                     break;
 
                 case OrbwalkerMode.LastHit:

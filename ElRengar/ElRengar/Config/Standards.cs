@@ -43,11 +43,11 @@ namespace ElRengar.Config
     {
         #region Static Fields
 
-        public static int LeapRange = 775;
-
         public static bool IsVisible = true;
 
-        private static Menu menu;
+        public static int LeapRange = 775;
+
+        public static Menu menu;
 
         #endregion
 
@@ -78,7 +78,7 @@ namespace ElRengar.Config
             menu = new Menu("ElRengar", "ElRengar", true);
             Bootstrap.Init(new string[] { }); //blabla
 
-            var comboMenu = menu.Add(new Menu("Combo settings", "Combo settings"));
+            var comboMenu = new Menu("combo.settings", "Combo settings");
             {
                 comboMenu.Add(new MenuSeparator("General", "General"));
                 comboMenu.Add(new MenuBool("combo.spell.q", "Use Q", true));
@@ -94,7 +94,9 @@ namespace ElRengar.Config
                 comboMenu.Add(new MenuKeyBind("combo.spell.triple.q", "Triple Q", Keys.T, KeyBindType.Press));
             }
 
-            var harassMenu = menu.Add(new Menu("Harass settings", "Harass settings"));
+            menu.Add(comboMenu);
+
+            var harassMenu = new Menu("harass.settings", "Harass settings");
             {
                 harassMenu.Add(new MenuSeparator("General", "General"));
                 harassMenu.Add(new MenuBool("harass.spell.q", "Use Q", true));
@@ -103,6 +105,19 @@ namespace ElRengar.Config
                 harassMenu.Add(new MenuSeparator("Prioritized", "Prioritized"));
                 harassMenu.Add(new MenuList<string>("harass.prioritze", "Prioritized spell", new[] { "Q", "W", "E" }));
             }
+
+            menu.Add(harassMenu);
+
+            var drawingsMenu = new Menu("drawing.settings", "Draw settings");
+            {
+                drawingsMenu.Add(new MenuSeparator("General", "General"));
+                drawingsMenu.Add(new MenuBool("drawing.deactivate", "Disable all drawings"));
+                drawingsMenu.Add(new MenuBool("drawing.draw.spell.w", "W range", true));
+                drawingsMenu.Add(new MenuBool("drawing.draw.spell.e", "E range", true));
+                drawingsMenu.Add(new MenuBool("drawing.draw.spell.r", "R range", true));
+            }
+
+            menu.Add(drawingsMenu);
 
             menu.Attach();
         }
