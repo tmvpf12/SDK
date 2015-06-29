@@ -24,7 +24,6 @@
             {
                 CreateMenu();
                 Game.OnUpdate += OnUpdate;
-                //Notifications.Add(new Notification("Test", "test"));
             }
             catch (Exception ex)
             {
@@ -35,6 +34,10 @@
         #endregion
 
         #region Methods
+
+        private static void DoCombo()
+        {
+        }
 
         private static void OnUpdate(EventArgs args)
         {
@@ -47,10 +50,5 @@
         }
 
         #endregion
-
-        private static void DoCombo()
-        {
-
-        }
     }
 }
