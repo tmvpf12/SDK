@@ -102,11 +102,8 @@
 
                 if (IsVisible && spells[Spells.E].IsReady() && Player.Distance(target) <= spells[Spells.E].Range)
                 {
-                    var pred = spells[Spells.E].GetPrediction(target);
-                    if (pred.Hitchance >= HitChance.High)
-                    {
-                        spells[Spells.E].Cast(target);
-                    }
+                    //waiting for prediction
+                    spells[Spells.E].Cast(target);
                 }
 
                 if (spells[Spells.W].IsReady() && target.IsValidTarget(spells[Spells.W].Range))
@@ -124,11 +121,8 @@
 
                 if (spells[Spells.E].IsReady())
                 {
-                    var pred = spells[Spells.E].GetPrediction(target, false);
-                    if (pred.Hitchance >= HitChance.High)
-                    {
-                        spells[Spells.E].Cast(target);
-                    }
+                    //waiting for prediction
+                    spells[Spells.E].Cast(target);
                 }
 
                 if (spells[Spells.W].IsReady() && target.IsValidTarget(spells[Spells.W].Range))

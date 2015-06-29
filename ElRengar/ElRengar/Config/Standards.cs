@@ -92,9 +92,9 @@ namespace ElRengar.Config
                 comboMenu.Add(new MenuList<string>("combo.prioritze", "Prioritized spell", new[] { "Q", "W", "E" }));
                 comboMenu.Add(new MenuSeparator("God mode", "God mode"));
                 comboMenu.Add(new MenuKeyBind("combo.spell.triple.q", "Triple Q", Keys.T, KeyBindType.Press));
-            }
 
-            menu.Add(comboMenu);
+                menu.Add(comboMenu);
+            }
 
             var harassMenu = new Menu("harass.settings", "Harass settings");
             {
@@ -104,9 +104,9 @@ namespace ElRengar.Config
                 harassMenu.Add(new MenuBool("harass.spell.e", "Use E", true));
                 harassMenu.Add(new MenuSeparator("Prioritized", "Prioritized"));
                 harassMenu.Add(new MenuList<string>("harass.prioritze", "Prioritized spell", new[] { "Q", "W", "E" }));
-            }
 
-            menu.Add(harassMenu);
+                menu.Add(harassMenu);
+            }
 
             var drawingsMenu = new Menu("drawing.settings", "Draw settings");
             {
@@ -115,9 +115,9 @@ namespace ElRengar.Config
                 drawingsMenu.Add(new MenuBool("drawing.draw.spell.w", "W range", true));
                 drawingsMenu.Add(new MenuBool("drawing.draw.spell.e", "E range", true));
                 drawingsMenu.Add(new MenuBool("drawing.draw.spell.r", "R range", true));
-            }
 
-            menu.Add(drawingsMenu);
+                menu.Add(drawingsMenu);
+            }
 
             menu.Attach();
         }
