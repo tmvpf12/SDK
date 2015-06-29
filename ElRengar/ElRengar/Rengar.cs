@@ -17,12 +17,12 @@
         #region Static Fields
 
         public static Dictionary<Spells, Spell> spells = new Dictionary<Spells, Spell>()
-                                                             {
-                                                                 { Spells.Q, new Spell(SpellSlot.Q, 300) },
-                                                                 { Spells.W, new Spell(SpellSlot.W, 500) },
-                                                                 { Spells.E, new Spell(SpellSlot.E, 1000) },
-                                                                 { Spells.R, new Spell(SpellSlot.R, 2000) }
-                                                             };
+        {
+            { Spells.Q, new Spell(SpellSlot.Q, 300) },
+            { Spells.W, new Spell(SpellSlot.W, 500) },
+            { Spells.E, new Spell(SpellSlot.E, 1000) },
+            { Spells.R, new Spell(SpellSlot.R, 2000) }
+        };
 
         #endregion
 
@@ -78,7 +78,6 @@
 
         private static void DoCombo()
         {
-           
             var target = TargetSelector.GetTarget();
             if (target == null || !target.IsValidTarget())
             {
