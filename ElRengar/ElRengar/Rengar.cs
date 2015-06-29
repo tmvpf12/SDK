@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ElRengar
+﻿namespace ElRengar
 {
-    internal class Rengar : Config.Menu
+    using ElRengar.Config;
+
+    internal class Rengar : Menu
     {
-      
+        
     }
 }
