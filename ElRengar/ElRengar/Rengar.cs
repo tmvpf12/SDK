@@ -3,15 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LeagueSharp;
 
 namespace ElRengar
 {
-    class Program
+    internal class Rengar : Config.Menu
     {
-        static void Main(string[] args)
-        {
-
-        }
+      
     }
 }
