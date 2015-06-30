@@ -49,6 +49,8 @@ namespace ElRengar.Config
 
         public static Menu menu;
 
+        public static OrbwalkerMode ActiveMode { get; set; }
+
         #endregion
 
         #region Public Properties

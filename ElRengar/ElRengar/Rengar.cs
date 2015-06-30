@@ -10,6 +10,7 @@
     using LeagueSharp.SDK.Core.Enumerations;
     using LeagueSharp.SDK.Core.Extensions;
     using LeagueSharp.SDK.Core.UI.IMenu.Values;
+    using LeagueSharp.SDK.Core.Utils;
     using LeagueSharp.SDK.Core.Wrappers;
 
     internal class Rengar : Standards
@@ -18,7 +19,7 @@
 
         public static Dictionary<Spells, Spell> spells = new Dictionary<Spells, Spell>()
         {
-            { Spells.Q, new Spell(SpellSlot.Q, 300) },
+            { Spells.Q, new Spell(SpellSlot.Q, Player.AttackRange) },
             { Spells.W, new Spell(SpellSlot.W, 500) },
             { Spells.E, new Spell(SpellSlot.E, 1000) },
             { Spells.R, new Spell(SpellSlot.R, 2000) }
@@ -52,7 +53,6 @@
             }
         }
 
-
         #endregion
 
         #region Methods
@@ -81,6 +81,10 @@
 
         private static void DoCombo()
         {
+
+            Console.WriteLine(Player.AttackRange);
+
+
             var target = TargetSelector.GetTarget(spells[Spells.E].Range);
             if (target == null || !target.IsValidTarget())
             {
@@ -93,16 +97,17 @@
 
             var prioritized = menu["combo.settings"]["combo.prioritize"].GetValue<MenuList>();
 
+
             if (Ferocity <= 4)
             {
-                if (useQ && spells[Spells.Q].IsReady())
+                if (useQ && spells[Spells.Q].IsReady() && Player.Distance(target) < spells[Spells.Q].Range + 30)
                 {
                     spells[Spells.Q].Cast();
                 }
 
                 if (RengarR) return;
 
-                if (useE && IsVisible && spells[Spells.E].IsReady() && Player.Distance(target) <= spells[Spells.E].Range)
+                if (useE && IsVisible && spells[Spells.E].IsReady() && Player.Distance(target) < spells[Spells.E].Range)
                 {
                     //waiting for prediction
                     spells[Spells.E].Cast(target);
@@ -119,15 +124,14 @@
                 switch (prioritized.Index)
                 {
                     case 0:
-                        if (useQ && spells[Spells.Q].IsReady())
+                        if (useQ && spells[Spells.Q].IsReady() && Player.Distance(target) < spells[Spells.Q].Range + 50)
                         {
                             spells[Spells.Q].Cast();
                         }
                         break;
 
                     case 1:
-                        if (RengarR) return;// ok this is stupid
-                        if (useW && spells[Spells.W].IsReady() && Player.Distance(target) < spells[Spells.W].Range)
+                        if (useW && spells[Spells.W].IsReady() && Player.Distance(target) < spells[Spells.W].Range && !RengarR)
                         {
                             spells[Spells.W].Cast();
                         }
@@ -135,8 +139,7 @@
                         break;
 
                     case 2:
-                        if (RengarR) return; // ok this is stupid
-                        if (useE && spells[Spells.E].IsReady())
+                        if (useE && spells[Spells.E].IsReady() && !RengarR)
                         {
                             //waiting for prediction
                             spells[Spells.E].Cast(target);
@@ -181,18 +184,16 @@
             }
         }
 
+        private static void OnAction(object sender, Orbwalker.OrbwalkerActionArgs orbwalk)
+        {        
+            var target = orbwalk.Target; // I hope this is fine.
+            if (!target.IsValidTarget())
+                return;
 
-        private static void OnAction(object sender, Orbwalker.OrbwalkerActionArgs e)
-        {
-            //Console.WriteLine(e.Type);
-            if (e.Type == OrbwalkerType.AfterAttack)
+            if (orbwalk.Type == OrbwalkerType.AfterAttack &&
+                target.IsValidTarget() && spells[Spells.Q].IsReady() && Ferocity == 5 && ActiveMode == OrbwalkerMode.Hybrid || ActiveMode == OrbwalkerMode.Orbwalk)
             {
-                if (spells[Spells.Q].IsReady() && !Player.IsWindingUp && Ferocity == 5)
-                {
-                    spells[Spells.Q].Cast();
-                    Console.WriteLine("Reset AA");
-                    Console.WriteLine("AfterAttack 1111");
-                }
+                spells[Spells.Q].Cast();
             }
         }
 
