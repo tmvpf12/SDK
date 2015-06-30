@@ -41,7 +41,7 @@
                 CreateMenu();
                 CalculateRange();
                 Visibility();
-                Game.OnUpdate += OnUpdate;
+                Game.OnUpdate += OnUpdate;            
                 spells[Spells.E].SetSkillshot(0.25f, 70f, 1500f, true, SkillshotType.SkillshotLine);
             }
             catch (Exception ex)
@@ -49,6 +49,7 @@
                 Console.WriteLine(ex);
             }
         }
+
 
         #endregion
 
@@ -78,13 +79,8 @@
 
         private static void DoCombo()
         {
-            var target = TargetSelector.GetTarget();
+            var target = TargetSelector.GetTarget(spells[Spells.E].Range);
             if (target == null || !target.IsValidTarget())
-            {
-                target = TargetSelector.GetTarget(spells[Spells.E].Range);
-            }
-
-            if (!target.IsValidTarget(spells[Spells.E].Range))
             {
                 return;
             }
@@ -93,20 +89,23 @@
             var useW = menu["combo.settings"]["combo.spell.w"].GetValue<MenuBool>().Value;
             var useE = menu["combo.settings"]["combo.spell.e"].GetValue<MenuBool>().Value;
 
+            var prioritized = menu["combo.settings"]["combo.prioritize"].GetValue<MenuList>();
+
+
             if (Ferocity <= 4)
             {
-                if (spells[Spells.Q].IsReady())
+                if (useQ && spells[Spells.Q].IsReady())
                 {
                     spells[Spells.Q].Cast();
                 }
 
-                if (IsVisible && spells[Spells.E].IsReady() && Player.Distance(target) <= spells[Spells.E].Range)
+                if (useE && IsVisible && spells[Spells.E].IsReady() && Player.Distance(target) <= spells[Spells.E].Range)
                 {
                     //waiting for prediction
                     spells[Spells.E].Cast(target);
                 }
 
-                if (spells[Spells.W].IsReady() && target.IsValidTarget(spells[Spells.W].Range))
+                if (useW && spells[Spells.W].IsReady() && Player.Distance(target) < spells[Spells.W].Range)
                 {
                     spells[Spells.W].Cast();
                 }
@@ -114,20 +113,30 @@
 
             if (Ferocity == 5)
             {
-                if (spells[Spells.Q].IsReady())
+                switch (prioritized.Index)
                 {
-                    spells[Spells.Q].Cast();
-                }
+                    case 0:
+                        if (useQ && spells[Spells.Q].IsReady())
+                        {
+                            spells[Spells.Q].Cast();
+                        }
+                        break;
 
-                if (spells[Spells.E].IsReady())
-                {
-                    //waiting for prediction
-                    spells[Spells.E].Cast(target);
-                }
+                    case 1:
+                        if (useW && spells[Spells.W].IsReady() && Player.Distance(target) < spells[Spells.W].Range)
+                        {
+                            spells[Spells.W].Cast();
+                        }
+                      
+                        break;
 
-                if (spells[Spells.W].IsReady() && target.IsValidTarget(spells[Spells.W].Range))
-                {
-                    spells[Spells.W].Cast();
+                    case 2:
+                        if (useE && spells[Spells.E].IsReady())
+                        {
+                            //waiting for prediction
+                            spells[Spells.E].Cast(target);
+                        }
+                        break;
                 }
             }
         }
