@@ -98,7 +98,7 @@
             var prioritized = menu["combo.settings"]["combo.prioritize"].GetValue<MenuList>();
 
 
-            if (Ferocity <= 4)
+            if (Felicity <= 4)
             {
                 if (useQ && spells[Spells.Q].IsReady() && Player.Distance(target) < spells[Spells.Q].Range + 30)
                 {
@@ -119,7 +119,7 @@
                 }
             }
 
-            if (Ferocity == 5)
+            if (Felicity == 5)
             {
                 switch (prioritized.Index)
                 {
@@ -167,7 +167,6 @@
             {
                 case OrbwalkerMode.Orbwalk:
                     DoCombo();
-                    //Console.WriteLine(Ferocity);
                     break;
 
                 case OrbwalkerMode.LastHit:
@@ -191,7 +190,7 @@
                 return;
 
             if (orbwalk.Type == OrbwalkerType.AfterAttack &&
-                target.IsValidTarget() && spells[Spells.Q].IsReady() && Ferocity == 5 && ActiveMode == OrbwalkerMode.Hybrid || ActiveMode == OrbwalkerMode.Orbwalk)
+                target.IsValidTarget() && spells[Spells.Q].IsReady() && Felicity == 5 && ActiveMode == OrbwalkerMode.Hybrid || ActiveMode == OrbwalkerMode.Orbwalk)
             {
                 spells[Spells.Q].Cast();
             }

@@ -54,8 +54,8 @@ namespace ElRengar.Config
         #endregion
 
         #region Public Properties
-
-        public static int Ferocity
+ 
+        public static int Felicity //Felicity Smoak makes me Rengarrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
         {
             get
             {
