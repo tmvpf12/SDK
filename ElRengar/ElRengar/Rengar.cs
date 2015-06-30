@@ -41,7 +41,9 @@
                 CreateMenu();
                 CalculateRange();
                 Visibility();
-                Game.OnUpdate += OnUpdate;            
+                Game.OnUpdate += OnUpdate;
+                Orbwalker.OnAction += OnAction;
+              
                 spells[Spells.E].SetSkillshot(0.25f, 70f, 1500f, true, SkillshotType.SkillshotLine);
             }
             catch (Exception ex)
@@ -91,13 +93,14 @@
 
             var prioritized = menu["combo.settings"]["combo.prioritize"].GetValue<MenuList>();
 
-
             if (Ferocity <= 4)
             {
                 if (useQ && spells[Spells.Q].IsReady())
                 {
                     spells[Spells.Q].Cast();
                 }
+
+                if (RengarR) return;
 
                 if (useE && IsVisible && spells[Spells.E].IsReady() && Player.Distance(target) <= spells[Spells.E].Range)
                 {
@@ -123,6 +126,7 @@
                         break;
 
                     case 1:
+                        if (RengarR) return;// ok this is stupid
                         if (useW && spells[Spells.W].IsReady() && Player.Distance(target) < spells[Spells.W].Range)
                         {
                             spells[Spells.W].Cast();
@@ -131,6 +135,7 @@
                         break;
 
                     case 2:
+                        if (RengarR) return; // ok this is stupid
                         if (useE && spells[Spells.E].IsReady())
                         {
                             //waiting for prediction
@@ -173,6 +178,21 @@
                 case OrbwalkerMode.Hybrid:
                     DoHybrid();
                     break;
+            }
+        }
+
+
+        private static void OnAction(object sender, Orbwalker.OrbwalkerActionArgs e)
+        {
+            //Console.WriteLine(e.Type);
+            if (e.Type == OrbwalkerType.AfterAttack)
+            {
+                if (spells[Spells.Q].IsReady() && !Player.IsWindingUp && Ferocity == 5)
+                {
+                    spells[Spells.Q].Cast();
+                    Console.WriteLine("Reset AA");
+                    Console.WriteLine("AfterAttack 1111");
+                }
             }
         }
 

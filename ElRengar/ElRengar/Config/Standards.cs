@@ -69,6 +69,14 @@ namespace ElRengar.Config
             }
         }
 
+        public static bool RengarR
+        {
+            get
+            {
+                return Player.HasBuff("rengarr");
+            }
+        }
+
         #endregion
 
         #region Methods
