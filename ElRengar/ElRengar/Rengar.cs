@@ -173,10 +173,9 @@
         {
             if (sender.IsMe)
             {
-                if (args.SData.Name == "RengarR")
+                if (args.SData.Name == "RengarR" && Items.CanUseItem(3142))
                 {
-                    if (Items.CanUseItem(3142))
-                        DelayAction.Add(1000, () => Items.UseItem(3142));
+                    DelayAction.Add(1000, () => Items.UseItem(3142));
                 }
             } 
         }
