@@ -17,6 +17,7 @@ namespace ElRengar.Config
 {
     #region
 
+    using System;
     using System.Runtime.InteropServices.WindowsRuntime;
     using System.Windows.Forms;
 
@@ -61,6 +62,8 @@ namespace ElRengar.Config
         public static SpellSlot Smite;
 
         public static Items.Item Botrk, Cutlass;
+
+        public static String ScriptVersion { get { return typeof(Rengar).Assembly.GetName().Version.ToString(); } }
 
         #endregion
 
@@ -131,9 +134,11 @@ namespace ElRengar.Config
 
             if (Items.CanUseItem(3074)) Items.UseItem(3074); //Hydra
             if (Items.CanUseItem(3077)) Items.UseItem(3077); //Tiamat
-            if (Items.CanUseItem(3142)) Items.UseItem(3142); //Ghostblade 
+
             if (Items.CanUseItem(3144)) Items.UseItem(3144); //Cutlass
             if (Items.CanUseItem(3153)) Items.UseItem(3153); //Botrk
+            if (Items.CanUseItem(3142)) Items.UseItem(3142); //Ghostblade 
+            
 
             /*if (Player.Distance(target.ServerPosition) <= Cutlass.Range && Cutlass.IsReady && Cutlass.IsOwned() 
                 || Player.Distance(target.ServerPosition) <= Botrk.Range && Botrk.IsReady && Cutlass.IsOwned())
@@ -186,11 +191,28 @@ namespace ElRengar.Config
                 laneclearMenu.Add(new MenuBool("laneclear.spell.q", "Use Q", true));
                 laneclearMenu.Add(new MenuBool("laneclear.spell.w", "Use W", true));
                 laneclearMenu.Add(new MenuBool("laneclear.spell.e", "Use E", false));
+                laneclearMenu.Add(new MenuSeparator("Items", "Item usage"));
+                laneclearMenu.Add(new MenuBool("laneclear.items.hydra", "Ravenous Hydra", true));
                 laneclearMenu.Add(new MenuSeparator("Ferocity", "Ferocity"));
                 laneclearMenu.Add(new MenuBool("laneclear.save.ferocity", "Save ferocity", true));
                 laneclearMenu.Add(new MenuList<string>("laneclear.prioritize", "Prioritized spell", new[] { "Q", "W", "E" }));
 
                 menu.Add(laneclearMenu);
+            }
+
+            var jungleClearMenu = new Menu("jungleclear.settings", "Jungleclear settings");
+            {
+                jungleClearMenu.Add(new MenuSeparator("General", "General"));
+                jungleClearMenu.Add(new MenuBool("jungleclear.spell.q", "Use Q", true));
+                jungleClearMenu.Add(new MenuBool("jungleclear.spell.w", "Use W", true));
+                jungleClearMenu.Add(new MenuBool("jungleclear.spell.e", "Use E", false));
+                jungleClearMenu.Add(new MenuSeparator("Items", "Item usage"));
+                jungleClearMenu.Add(new MenuBool("jungleclear.items.hydra", "Ravenous Hydra", true));
+                jungleClearMenu.Add(new MenuSeparator("Ferocity", "Ferocity"));
+                jungleClearMenu.Add(new MenuBool("jungleclear.save.ferocity", "Save ferocity", true));
+                jungleClearMenu.Add(new MenuList<string>("jungleclear.prioritize", "Prioritized spell", new[] { "Q", "W", "E" }));
+
+                menu.Add(jungleClearMenu);
             }
 
             var miscMenu = new Menu("misc.settings", "Misc settings");
@@ -211,7 +233,23 @@ namespace ElRengar.Config
                 miscMenu.Add(new MenuBool("misc.drawing.draw.spell.e", "E range", true));
                 miscMenu.Add(new MenuBool("misc.drawing.draw.spell.r", "R range", true));
 
+                miscMenu.Add(new MenuSeparator("Debug", "Debug"));
+                miscMenu.Add(new MenuBool("misc.debug.active", "Debug", false));
+
                 menu.Add(miscMenu);
+            }
+
+            var creditsMenu = new Menu("credits.settings", "Credits");
+            {
+                creditsMenu.Add(new MenuSeparator("credits.title.1", "if you would like to donate via PayPal:"));
+                creditsMenu.Add(new MenuSeparator("credits.title.2", "Info@zavox.nl"));
+                creditsMenu.Add(new MenuSeparator("credits.title.3", "  "));
+                creditsMenu.Add(new MenuSeparator("credits.title.4", "This assembly is created by:"));
+                creditsMenu.Add(new MenuSeparator("credits.title.5", "jQuery"));
+                creditsMenu.Add(new MenuSeparator("credits.title.6", " "));
+                creditsMenu.Add(new MenuSeparator("credits.title.7",  String.Format("Version: {0}", Rengar.ScriptVersion)));
+
+                menu.Add(creditsMenu);
             }
 
             menu.Attach();

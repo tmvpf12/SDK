@@ -18,9 +18,10 @@
     using LeagueSharp.SDK.Core.IDrawing;
     using LeagueSharp.SDK.Core.Utils;
 
+
     using SharpDX;
 
-    using Color = SharpDX.Color;
+    using Color = System.Drawing.Color;
 
     internal class Rengar : Standards
     {
@@ -56,6 +57,7 @@
                 Game.OnUpdate += OnUpdate;
                 Orbwalker.OnAction += OnAction;
                 Dash.OnDash += OnDash;
+                Drawing.OnDraw += OnDraw;
                 Obj_AI_Base.OnProcessSpellCast += OnProcessSpellCast;
             }
             catch (Exception ex)
@@ -82,7 +84,7 @@
             var useEoutOfRange = menu["combo.settings"]["combo.spell.e.outofrange"].GetValue<MenuBool>().Value;
             var prioritized = menu["combo.settings"]["combo.prioritize"].GetValue<MenuList>();
 
-            Orbwalker.Orbwalk(target: target, position: target.Position);
+            Orbwalker.Orbwalk(target: target, position: Game.CursorPos);
 
             if (Felicity <= 4)
             {
@@ -98,7 +100,7 @@
                     spells[Spells.E].Cast(target);
                 }
 
-                if (useW && spells[Spells.W].IsReady() && Vector3.Distance(Player.ServerPosition, target.ServerPosition) < spells[Spells.W].Range * 0x1 / 0x3)
+                if (useW && spells[Spells.W].IsReady() && Vector3.Distance(Player.ServerPosition, target.ServerPosition) <= spells[Spells.W].Range * 0x1 / 0x3)
                 {
                     spells[Spells.W].Cast();
                 }
@@ -137,8 +139,10 @@
                     spells[Spells.E].Cast(target);
                 }
             }
-
-            ItemHandler(target);
+            if (Player.Distance(target.ServerPosition) <= 400f)
+            {
+                ItemHandler(target);
+            }
         }
 
         private static void DoHybrid()
@@ -203,11 +207,82 @@
             }
         }
 
+        private static void DoJungleClear()
+        {
+            var useQ = menu["jungleclear.settings"]["jungleclear.spell.q"].GetValue<MenuBool>().Value;
+            var useW = menu["jungleclear.settings"]["jungleclear.spell.w"].GetValue<MenuBool>().Value;
+            var useE = menu["jungleclear.settings"]["jungleclear.spell.e"].GetValue<MenuBool>().Value;
+            var useHydra = menu["jungleclear.settings"]["jungleclear.items.hydra"].GetValue<MenuBool>().Value;
+            var saveFerocity = menu["jungleclear.settings"]["jungleclear.save.ferocity"].GetValue<MenuBool>().Value;
+            var prioritized = menu["jungleclear.settings"]["jungleclear.prioritize"].GetValue<MenuList>();
+
+            var minions =
+                GameObjects.Jungle.Where(m => m.IsValid && m.Distance(Player) < spells[Spells.W].Range).ToList();
+
+            if (!minions.Any())
+                return;
+
+            if (Felicity <= 4)
+            {
+                if (useQ && spells[Spells.Q].IsReady()
+                    && Player.Distance(minions[0]) < spells[Spells.Q].Range + 0x32)
+                {
+                    spells[Spells.Q].Cast();
+                }
+
+                if (useW && spells[Spells.W].IsReady() && minions.Count() > 1 && Vector3.Distance(Player.ServerPosition, minions[0].ServerPosition) < spells[Spells.W].Range * 0x1 / 0x3)
+                {
+                    spells[Spells.W].Cast(minions[0], false, true);
+                }
+
+                if (useE && spells[Spells.E].IsReady())
+                {
+                    spells[Spells.E].Cast(minions[0]);
+                }
+            }
+
+            if (Felicity == 5)
+            {
+                if (saveFerocity) return;
+
+                switch (prioritized.Index)
+                {
+                    case 0:
+                        if (useQ && spells[Spells.Q].IsReady()
+                            && Player.Distance(minions[0]) < spells[Spells.Q].Range + 0x32)
+                        {
+                            spells[Spells.Q].Cast();
+                        }
+                        break;
+
+                    case 1:
+                        if (useW && spells[Spells.W].IsReady() && minions.Count() > 1 && Vector3.Distance(Player.ServerPosition, minions[0].ServerPosition) < spells[Spells.W].Range * 0x1 / 0x3)
+                        {
+                            spells[Spells.W].Cast(minions[0], false, true);
+                        }
+                        break;
+
+                    case 2:
+                        if (useE && spells[Spells.E].IsReady())
+                        {
+                            spells[Spells.E].Cast(minions[0]);
+                        }
+                        break;
+                }
+            }
+
+            if (useHydra && Items.CanUseItem(3074) || Items.CanUseItem(3077) && Vector3.Distance(Player.ServerPosition, minions[0].ServerPosition) < 400f && minions.Count() > 3)
+            {
+                Items.UseItem(3074); Items.UseItem(3077);
+            }
+        }
+
         private static void DoLaneClear()
         {
             var useQ = menu["laneclear.settings"]["laneclear.spell.q"].GetValue<MenuBool>().Value;
             var useW = menu["laneclear.settings"]["laneclear.spell.w"].GetValue<MenuBool>().Value;
             var useE = menu["laneclear.settings"]["laneclear.spell.e"].GetValue<MenuBool>().Value;
+            var useHydra = menu["laneclear.settings"]["laneclear.items.hydra"].GetValue<MenuBool>().Value;
             var saveFerocity = menu["laneclear.settings"]["laneclear.save.ferocity"].GetValue<MenuBool>().Value;
             var prioritized = menu["laneclear.settings"]["laneclear.prioritize"].GetValue<MenuList>();
 
@@ -227,10 +302,10 @@
 
                 if (useW && spells[Spells.W].IsReady() && minions.Count() > 2 && Vector3.Distance(Player.ServerPosition, minions[0].ServerPosition) < spells[Spells.W].Range * 0x1 / 0x3)
                 {
-                    spells[Spells.W].Cast();
+                    spells[Spells.W].Cast(minions[0], false, true);
                 }
 
-                if (useE && spells[Spells.E].IsReady() && Vector3.Distance(Player.ServerPosition, minions[0].ServerPosition) <= LeapRange)
+                if (useE && spells[Spells.E].IsReady())
                 {
                     spells[Spells.E].Cast(minions[0]);
                 }
@@ -253,12 +328,12 @@
                     case 1:
                         if (useW && spells[Spells.W].IsReady() && minions.Count() > 2 && Vector3.Distance(Player.ServerPosition, minions[0].ServerPosition) < spells[Spells.W].Range * 0x1 / 0x3)
                         {
-                            spells[Spells.W].Cast();
+                            spells[Spells.W].Cast(minions[0], false, true);
                         }
                         break;
 
                     case 2:
-                        if (useE && spells[Spells.E].IsReady() && Vector3.Distance(Player.ServerPosition, minions[0].ServerPosition) <= LeapRange)
+                        if (useE && spells[Spells.E].IsReady())
                         {
                             spells[Spells.E].Cast(minions[0]);
                         }
@@ -266,18 +341,29 @@
                 }
             }
 
-            Drawing.DrawText(
-                    Drawing.Width * 0.44f, Drawing.Height * 0.80f, System.Drawing.Color.Red, minions.Count().ToString());
+            if (useHydra && Items.CanUseItem(3074) || Items.CanUseItem(3077) && Vector3.Distance(Player.ServerPosition, minions[0].ServerPosition) < 400f && minions.Count() > 3)
+            {
+                Items.UseItem(3074); Items.UseItem(3077);
+            }
 
-            Console.WriteLine(minions.Count());
+            if (menu["misc.settings"]["misc.debug.active"].GetValue<MenuBool>().Value)
+            {
+                Drawing.DrawText(
+                    Drawing.Width * 0.44f, Drawing.Height * 0.80f, System.Drawing.Color.Red, "Minions in range: " + minions.Count().ToString());
+
+                Console.WriteLine(minions.Count());
+            }
         }
 
         private static void DoLastHit()
         {
+
         }
 
         private static void OnUpdate(EventArgs args)
         {
+            spells[Spells.R].Range = 1000 + spells[Spells.R].Level * 1000;
+
             switch (Orbwalker.ActiveMode)
             {
                 case OrbwalkerMode.Orbwalk:
@@ -290,6 +376,7 @@
 
                 case OrbwalkerMode.LaneClear:
                     DoLaneClear();
+                    DoJungleClear();
                     break;
 
                 case OrbwalkerMode.Hybrid:
@@ -308,11 +395,6 @@
                 {
                     DelayAction.Add(0x5dc, () => Items.UseItem(3142));
                 }
-
-                if (Player.IsDashing())
-                {
-                    Console.WriteLine("IsDashing");
-                }
             }
         }
 
@@ -330,6 +412,25 @@
             }
         }
         #endregion
+
+        private static void OnDraw(EventArgs args)
+        {
+            var drawNone = menu["misc.settings"]["misc.drawing.deactivate"].GetValue<MenuBool>().Value;
+            var drawW = menu["misc.settings"]["misc.drawing.draw.spell.w"].GetValue<MenuBool>().Value;
+            var drawE = menu["misc.settings"]["misc.drawing.draw.spell.e"].GetValue<MenuBool>().Value;
+            var drawR = menu["misc.settings"]["misc.drawing.draw.spell.r"].GetValue<MenuBool>().Value;
+
+            if (drawNone) return;
+
+            if (drawW && Rengar.spells[Spells.W].Level > 0)
+                Drawing.DrawCircle(GameObjects.Player.Position, Rengar.spells[Spells.W].Range, Color.Blue);
+
+            if (drawE && Rengar.spells[Spells.E].Level > 0)
+                Drawing.DrawCircle(GameObjects.Player.Position, Rengar.spells[Spells.E].Range, Color.Blue);
+
+            if (drawR && Rengar.spells[Spells.R].Level > 0)
+                Drawing.DrawCircle(GameObjects.Player.Position, Rengar.spells[Spells.R].Range, Color.Blue);
+        }
 
         private static void OnDash(object sender, Dash.DashArgs e)
         {
