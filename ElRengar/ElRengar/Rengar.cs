@@ -43,13 +43,16 @@
             }
             try
             {
+                Cutlass = new Items.Item(3144, 450f);
+                Botrk = new Items.Item(3153, 450f);
+                spells[Spells.E].SetSkillshot(0.25f, 70f, 1500f, true, SkillshotType.SkillshotLine);
+
                 CreateMenu();
+
                 Game.OnUpdate += OnUpdate;
                 Orbwalker.OnAction += OnAction;
                 Dash.OnDash += OnDash;
                 Obj_AI_Base.OnProcessSpellCast += OnProcessSpellCast;
-
-                spells[Spells.E].SetSkillshot(0.25f, 70f, 1500f, true, SkillshotType.SkillshotLine);
             }
             catch (Exception ex)
             {
@@ -63,7 +66,7 @@
 
         private static void DoCombo()
         {
-            var target = TargetSelector.GetTarget(spells[Spells.E].Range);
+            var target = TargetSelector.GetTarget(spells[Spells.W].Range);
             if (target == null || !target.IsValidTarget())
             {
                 return;
@@ -75,6 +78,8 @@
             var useEoutOfRange = menu["combo.settings"]["combo.spell.e.outofrange"].GetValue<MenuBool>().Value;
             var prioritized = menu["combo.settings"]["combo.prioritize"].GetValue<MenuList>();
 
+            Orbwalker.Orbwalk(target: target, position: target.Position);
+
             if (Felicity <= 4)
             {
                 if (useQ && spells[Spells.Q].IsReady() && Player.Distance(target) < spells[Spells.Q].Range + 0x1e)
@@ -84,13 +89,12 @@
 
                 if (RengarR) return;
 
-                if (useE && spells[Spells.E].IsReady() && Player.Distance(target) < spells[Spells.E].Range)
+                if (useE && spells[Spells.E].IsReady() && Player.Distance(target.ServerPosition) < spells[Spells.E].Range)
                 {
-                    //waiting for prediction
                     spells[Spells.E].Cast(target);
                 }
 
-                if (useW && spells[Spells.W].IsReady() && Player.Distance(target) < spells[Spells.W].Range)
+                if (useW && spells[Spells.W].IsReady() && Vector3.Distance(Player.ServerPosition, target.ServerPosition) < spells[Spells.W].Range * 0x1 / 0x3)
                 {
                     spells[Spells.W].Cast();
                 }
@@ -108,7 +112,7 @@
                         break;
 
                     case 1:
-                        if (useW && spells[Spells.W].IsReady() && Player.Distance(target) < spells[Spells.W].Range && !RengarR)
+                        if (useW && spells[Spells.W].IsReady() && Vector3.Distance(Player.ServerPosition, target.ServerPosition) < spells[Spells.W].Range * 0x1 / 0x3 && !RengarR)
                         {
                             spells[Spells.W].Cast();
                         }
@@ -116,7 +120,7 @@
                         break;
 
                     case 2:
-                        if (useE && spells[Spells.E].IsReady() && !RengarR)
+                        if (useE && spells[Spells.E].IsReady() && Player.Distance(target.ServerPosition) < spells[Spells.E].Range && !RengarR)
                         {
                             //waiting for prediction
                             spells[Spells.E].Cast(target);
@@ -124,21 +128,87 @@
                         break;
                 }
 
-                if (useEoutOfRange && Player.Distance(target) > spells[Spells.Q].Range + 0x64)
+                if (useEoutOfRange && Player.Distance(target.ServerPosition) > spells[Spells.Q].Range + 0x64)
                 {
                     spells[Spells.E].Cast(target);
                 }
             }
 
-            ItemHandler();
+            ItemHandler(target);
         }
 
         private static void DoHybrid()
         {
+            var target = TargetSelector.GetTarget(spells[Spells.E].Range);
+            if (target == null || !target.IsValidTarget())
+            {
+                return;
+            }
+
+            var useQ = menu["harass.settings"]["harass.spell.q"].GetValue<MenuBool>().Value;
+            var useW = menu["harass.settings"]["harass.spell.w"].GetValue<MenuBool>().Value;
+            var useE = menu["harass.settings"]["harass.spell.e"].GetValue<MenuBool>().Value;
+            var prioritized = menu["harass.settings"]["harass.prioritize"].GetValue<MenuList>();
+
+            if (Felicity <= 4)
+            {
+                if (useQ && spells[Spells.Q].IsReady() && Player.Distance(target) < spells[Spells.Q].Range + 0x1e)
+                {
+                    spells[Spells.Q].Cast();
+                }
+
+                if (useE && spells[Spells.E].IsReady() && Player.Distance(target.ServerPosition) < spells[Spells.E].Range)
+                {
+                    //waiting for prediction
+                    spells[Spells.E].Cast(target);
+                }
+
+                if (useW && spells[Spells.W].IsReady() && Vector3.Distance(Player.ServerPosition, target.ServerPosition) < spells[Spells.W].Range * 0x1 / 0x3)
+                {
+                    spells[Spells.W].Cast();
+                }
+            }
+
+            if (Felicity == 5)
+            {
+                switch (prioritized.Index)
+                {
+                    case 0:
+                        if (useQ && spells[Spells.Q].IsReady()
+                            && Player.Distance(target) < spells[Spells.Q].Range + 0x32)
+                        {
+                            spells[Spells.Q].Cast();
+                        }
+                        break;
+
+                    case 1:
+                        if (useW && spells[Spells.W].IsReady() &&  Vector3.Distance(Player.ServerPosition, target.ServerPosition) < spells[Spells.W].Range * 0x1 / 0x3)
+                        {
+                            spells[Spells.W].Cast();
+                        }
+                        break;
+
+                    case 2:
+                        if (useE && spells[Spells.E].IsReady() && Vector3.Distance(Player.ServerPosition, target.ServerPosition) <= LeapRange)
+                        {
+                            //waiting for prediction
+                            spells[Spells.E].Cast(target);
+                        }
+                        break;
+                }
+            }
         }
 
         private static void DoLaneClear()
         {
+            var minions =
+                GameObjects.EnemyMinions.Where(m => m.IsValid && m.Distance(Player) < spells[Spells.W].Range).ToList();
+
+            if (!minions.Any())
+                return;
+
+            Console.WriteLine(minions.Count());
+
         }
 
         private static void DoLastHit()
@@ -175,10 +245,16 @@
             {
                 if (args.SData.Name == "RengarR" && Items.CanUseItem(3142))
                 {
-                    DelayAction.Add(1000, () => Items.UseItem(3142));
+                    DelayAction.Add(0x5dc, () => Items.UseItem(3142));
                 }
-            } 
+
+                if (Player.IsDashing())
+                {
+                    Console.WriteLine("IsDashing");
+                }
+            }
         }
+
 
         #region OnAction
         private static void OnAction(object sender, Orbwalker.OrbwalkerActionArgs orbwalk)
@@ -216,6 +292,13 @@
                             }
                             break;
 
+                        case 1:
+                            if (spells[Spells.W].IsReady() && Vector3.Distance(Player.ServerPosition, target.ServerPosition) < spells[Spells.W].Range * 0x1 / 0x3)
+                            {
+                                spells[Spells.W].Cast();
+                            }
+                            break;
+
                         case 2:
                             if (spells[Spells.E].IsReady() && Vector3.Distance(Player.ServerPosition, target.ServerPosition) <= LeapRange)
                             {
@@ -224,7 +307,7 @@
                             break;
                     }
 
-                    ItemHandler(); 
+                    ItemHandler(target); 
                 }
             }
             else

@@ -60,6 +60,8 @@ namespace ElRengar.Config
 
         public static SpellSlot Smite;
 
+        public static Items.Item Botrk, Cutlass;
+
         #endregion
 
         #region Public Properties
@@ -120,7 +122,7 @@ namespace ElRengar.Config
 
         #region Methods
 
-        protected static void ItemHandler()
+        protected static void ItemHandler(Obj_AI_Base target)
         {
             if (Player.IsDashing())
             {
@@ -128,8 +130,12 @@ namespace ElRengar.Config
             }
 
             if (Items.CanUseItem(3074)) Items.UseItem(3074); //Hydra
-            if (Items.CanUseItem(3077)) Items.UseItem(3077); // Tiamat
-            if (Items.CanUseItem(3142)) Items.UseItem(3142); // Ghostblade 
+            if (Items.CanUseItem(3077)) Items.UseItem(3077); //Tiamat
+            if (Items.CanUseItem(3142)) Items.UseItem(3142); //Ghostblade 
+
+            if (Player.Distance(target.ServerPosition) <= Cutlass.Range && Cutlass.IsReady && Cutlass.IsOwned() 
+                || Player.Distance(target.ServerPosition) <= Botrk.Range && Botrk.IsReady && Cutlass.IsOwned())
+                Cutlass.Cast(target); Botrk.Cast(target);
         }
 
         protected static void NotificationHandler()
@@ -167,9 +173,22 @@ namespace ElRengar.Config
                 harassMenu.Add(new MenuBool("harass.spell.w", "Use W", true));
                 harassMenu.Add(new MenuBool("harass.spell.e", "Use E", true));
                 harassMenu.Add(new MenuSeparator("Prioritized", "Prioritized"));
-                harassMenu.Add(new MenuList<string>("harass.prioritze", "Prioritized spell", new[] { "Q", "W", "E" }));
+                harassMenu.Add(new MenuList<string>("harass.prioritize", "Prioritized spell", new[] { "Q", "W", "E" }));
 
                 menu.Add(harassMenu);
+            }
+
+            var laneclearMenu = new Menu("laneclear.settings", "Laneclear settings");
+            {
+                laneclearMenu.Add(new MenuSeparator("General", "General"));
+                laneclearMenu.Add(new MenuBool("laneclear.spell.q", "Use Q", true));
+                laneclearMenu.Add(new MenuBool("laneclear.spell.w", "Use W", true));
+                laneclearMenu.Add(new MenuBool("laneclear.spell.e", "Use E", false));
+                laneclearMenu.Add(new MenuSeparator("Ferocity", "Ferocity"));
+                laneclearMenu.Add(new MenuBool("laneclear.save.ferocity", "Save ferocity", true));
+                laneclearMenu.Add(new MenuList<string>("laneclear.prioritize", "Prioritized spell", new[] { "Q", "W", "E" }));
+
+                menu.Add(laneclearMenu);
             }
 
             var miscMenu = new Menu("misc.settings", "Misc settings");
@@ -189,7 +208,6 @@ namespace ElRengar.Config
                 miscMenu.Add(new MenuBool("misc.drawing.draw.spell.w", "W range", true));
                 miscMenu.Add(new MenuBool("misc.drawing.draw.spell.e", "E range", true));
                 miscMenu.Add(new MenuBool("misc.drawing.draw.spell.r", "R range", true));
-
 
                 menu.Add(miscMenu);
             }
