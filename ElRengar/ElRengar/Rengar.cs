@@ -88,21 +88,29 @@
 
             if (Felicity <= 4)
             {
-                if (useQ && spells[Spells.Q].IsReady() && Player.Distance(target) < spells[Spells.Q].Range + 0x32)
+                if (useQ && spells[Spells.Q].IsReady() && Player.Distance(target) < spells[Spells.Q].Range)
                 {
                     spells[Spells.Q].Cast();
                 }
 
                 if (RengarR) return;
 
+                if (useW && spells[Spells.W].IsReady() && Vector3.Distance(Player.ServerPosition, target.ServerPosition) <= spells[Spells.W].Range * 0x1 / 0x3)
+                {
+                    spells[Spells.W].Cast();
+                }
+
                 if (useE && spells[Spells.E].IsReady() && Player.Distance(target.ServerPosition) < spells[Spells.E].Range)
                 {
                     spells[Spells.E].Cast(target);
                 }
 
-                if (useW && spells[Spells.W].IsReady() && Vector3.Distance(Player.ServerPosition, target.ServerPosition) <= spells[Spells.W].Range * 0x1 / 0x3)
+                if (Felicity == 4)
                 {
-                    spells[Spells.W].Cast();
+                    if (!spells[Spells.Q].IsReady() && !spells[Spells.W].IsReady() && spells[Spells.E].IsReady())
+                    {
+                        spells[Spells.E].Cast(target);
+                    }
                 }
             }
 
@@ -139,6 +147,13 @@
                     spells[Spells.E].Cast(target);
                 }
             }
+
+            if (!Player.IsDashing() && Vector3.Distance(Player.ServerPosition, target.ServerPosition) <= 380)
+            {
+                if (Items.CanUseItem(3074)) Items.UseItem(3074); //Hydra
+                if (Items.CanUseItem(3077)) Items.UseItem(3077); //Tiamat
+            }
+ 
             if (Player.Distance(target.ServerPosition) <= 400f)
             {
                 ItemHandler(target);

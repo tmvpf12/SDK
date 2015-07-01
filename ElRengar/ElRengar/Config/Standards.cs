@@ -132,8 +132,8 @@ namespace ElRengar.Config
                 return;
             }
 
-            if (Items.CanUseItem(3074)) Items.UseItem(3074); //Hydra
-            if (Items.CanUseItem(3077)) Items.UseItem(3077); //Tiamat
+            /*if (Items.CanUseItem(3074)) Items.UseItem(3074); //Hydra
+            if (Items.CanUseItem(3077)) Items.UseItem(3077); //Tiamat*/
 
             if (Items.CanUseItem(3144)) Items.UseItem(3144); //Cutlass
             if (Items.CanUseItem(3153)) Items.UseItem(3153); //Botrk
