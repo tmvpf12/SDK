@@ -2,6 +2,8 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.Tracing;
+    using System.Linq;
 
     using ElRengar.Config;
 
@@ -10,8 +12,10 @@
     using LeagueSharp.SDK.Core.Enumerations;
     using LeagueSharp.SDK.Core.Extensions;
     using LeagueSharp.SDK.Core.UI.IMenu.Values;
-    using LeagueSharp.SDK.Core.Utils;
     using LeagueSharp.SDK.Core.Wrappers;
+    using LeagueSharp.SDK.Core.Events;
+
+    using SharpDX;
 
     internal class Rengar : Standards
     {
@@ -40,11 +44,11 @@
             try
             {
                 CreateMenu();
-                CalculateRange();
-                Visibility();
                 Game.OnUpdate += OnUpdate;
                 Orbwalker.OnAction += OnAction;
-              
+                Dash.OnDash += OnDash;
+                Obj_AI_Base.OnProcessSpellCast += OnProcessSpellCast;
+
                 spells[Spells.E].SetSkillshot(0.25f, 70f, 1500f, true, SkillshotType.SkillshotLine);
             }
             catch (Exception ex)
@@ -57,34 +61,8 @@
 
         #region Methods
 
-        // UNSEEN PREDATOR: While in brush or in stealth, Rengar gains bonus attack range 
-        // and his basic attacks cause him to leap at the target's location.
-        private static void CalculateRange()
-        {
-            if (Player.AttackRange > 150 && Player.AttackRange < 700)
-            {
-                LeapRange = (int)(Player.AttackRange + 175);
-            }
-
-            if (Player.AttackRange > 150 && Player.AttackRange >= 700)
-            {
-                LeapRange = (int)(Player.AttackRange + 75);
-            }
-
-            if (Player.AttackRange < 150)
-            {
-                LeapRange = 125;
-            }
-
-            spells[Spells.Q].Range = LeapRange + 25;
-        }
-
         private static void DoCombo()
         {
-
-            Console.WriteLine(Player.AttackRange);
-
-
             var target = TargetSelector.GetTarget(spells[Spells.E].Range);
             if (target == null || !target.IsValidTarget())
             {
@@ -94,9 +72,8 @@
             var useQ = menu["combo.settings"]["combo.spell.q"].GetValue<MenuBool>().Value;
             var useW = menu["combo.settings"]["combo.spell.w"].GetValue<MenuBool>().Value;
             var useE = menu["combo.settings"]["combo.spell.e"].GetValue<MenuBool>().Value;
-
+            var useEoutOfRange = menu["combo.settings"]["combo.spell.e.outofrange"].GetValue<MenuBool>().Value;
             var prioritized = menu["combo.settings"]["combo.prioritize"].GetValue<MenuList>();
-
 
             if (Felicity <= 4)
             {
@@ -107,7 +84,7 @@
 
                 if (RengarR) return;
 
-                if (useE && IsVisible && spells[Spells.E].IsReady() && Player.Distance(target) < spells[Spells.E].Range)
+                if (useE && spells[Spells.E].IsReady() && Player.Distance(target) < spells[Spells.E].Range)
                 {
                     //waiting for prediction
                     spells[Spells.E].Cast(target);
@@ -146,7 +123,14 @@
                         }
                         break;
                 }
+
+                if (useEoutOfRange && Player.Distance(target) > spells[Spells.Q].Range + 100)
+                {
+                    spells[Spells.E].Cast(target);
+                }
             }
+
+            ItemHandler();
         }
 
         private static void DoHybrid()
@@ -181,32 +165,77 @@
                     DoHybrid();
                     break;
             }
+
+            NotificationHandler();
         }
 
+        private static void OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
+        {
+            if (sender.IsMe)
+            {
+                if (args.SData.Name == "RengarR")
+                {
+                    //Will need to add some L33T logic for the Ghostblade casting
+                    if (Items.CanUseItem(3142))
+                        Items.UseItem(3142);
+                }
+            } 
+        }
+
+        #region OnAction
         private static void OnAction(object sender, Orbwalker.OrbwalkerActionArgs orbwalk)
-        {        
+        {
             var target = orbwalk.Target; // I hope this is fine.
             if (!target.IsValidTarget())
                 return;
 
-            if (orbwalk.Type == OrbwalkerType.AfterAttack &&
-                target.IsValidTarget() && spells[Spells.Q].IsReady() && Felicity == 5 && ActiveMode == OrbwalkerMode.Hybrid || ActiveMode == OrbwalkerMode.Orbwalk)
+            if (orbwalk.Type == OrbwalkerType.AfterAttack && spells[Spells.Q].IsReady() && target.IsValidTarget() && Felicity == 5 && ActiveMode == OrbwalkerMode.Hybrid || ActiveMode == OrbwalkerMode.Orbwalk)
             {
                 spells[Spells.Q].Cast();
             }
         }
+        #endregion
 
-        private static void Visibility()
+        private static void OnDash(object sender, Dash.DashArgs e)
         {
-            if (LeapRange > 150)
+            if (e.Unit.IsMe)
             {
-                IsVisible = false;
+                if (Orbwalker.ActiveMode == OrbwalkerMode.Orbwalk || Orbwalker.ActiveMode == OrbwalkerMode.Hybrid)
+                {
+                    var prioritized = menu["combo.settings"]["combo.prioritize"].GetValue<MenuList>();
+                    var target = TargetSelector.GetTarget(spells[Spells.E].Range);
+                    if (target == null || !target.IsValidTarget())
+                    {
+                        return;
+                    }
+
+                    switch (prioritized.Index)
+                    {
+                        case 0:
+                            if (spells[Spells.Q].IsReady() && Player.Distance(target) < spells[Spells.Q].Range + 50)
+                            {
+                                spells[Spells.Q].Cast();
+                            }
+                            break;
+
+                        case 2:
+                            if (spells[Spells.E].IsReady() && Vector3.Distance(Player.ServerPosition, target.ServerPosition) <= LeapRange)
+                            {
+                                spells[Spells.E].Cast(target);
+                            }
+                            break;
+                    }
+
+                    ItemHandler(); 
+                }
             }
             else
             {
-                IsVisible = true;
+                return;
             }
         }
+
+        
 
         #endregion
     }

@@ -17,12 +17,19 @@ namespace ElRengar.Config
 {
     #region
 
+    using System.Runtime.InteropServices.WindowsRuntime;
     using System.Windows.Forms;
 
     using LeagueSharp;
     using LeagueSharp.SDK.Core;
     using LeagueSharp.SDK.Core.Enumerations;
+    using LeagueSharp.SDK.Core.Events;
+    using LeagueSharp.SDK.Core.Extensions;
     using LeagueSharp.SDK.Core.UI.IMenu.Values;
+    using LeagueSharp.SDK.Core.UI.INotifications;
+    using LeagueSharp.SDK.Core.Wrappers;
+
+    using SharpDX;
 
     using Menu = LeagueSharp.SDK.Core.UI.IMenu.Menu;
 
@@ -43,18 +50,20 @@ namespace ElRengar.Config
     {
         #region Static Fields
 
-        public static bool IsVisible = true;
-
-        public static int LeapRange = 775;
-
         public static Menu menu;
 
         public static OrbwalkerMode ActiveMode { get; set; }
 
+        private static Notification notification;
+
+        public static SpellSlot Ignite;
+
+        public static SpellSlot Smite;
+
         #endregion
 
         #region Public Properties
- 
+
         public static int Felicity //Felicity Smoak makes me Rengarrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
         {
             get
@@ -70,6 +79,34 @@ namespace ElRengar.Config
                 return ObjectManager.Player;
             }
         }
+        public static bool HasPassive
+        {
+            get
+            {
+                return Player.HasBuff("rengarpassivebuff");
+            }
+        }
+
+        public static bool Rengartrophyicon6 //riot is retarded lmao kappahd 
+        {
+            get
+            {
+                return Player.HasBuff("rengarbushspeedbuff");
+            }
+        }
+
+        public static int LeapRange
+        {
+            get
+            {
+                if (HasPassive && Rengartrophyicon6)
+                {
+                    return 725;
+                }
+
+                return 600;
+            }
+        }
 
         public static bool RengarR
         {
@@ -82,6 +119,23 @@ namespace ElRengar.Config
         #endregion
 
         #region Methods
+
+        protected static void ItemHandler()
+        {
+            if (Player.IsDashing())
+            {
+                return;
+            }
+
+            if (Items.CanUseItem(3074)) Items.UseItem(3074); //Hydra
+            if (Items.CanUseItem(3077)) Items.UseItem(3077); // Tiamat
+            if (Items.CanUseItem(3142)) Items.UseItem(3142); // Ghostblade 
+        }
+
+        protected static void NotificationHandler()
+        {
+            //Waiting for old Notifications
+        }
 
         protected static void CreateMenu()
         {
@@ -118,15 +172,26 @@ namespace ElRengar.Config
                 menu.Add(harassMenu);
             }
 
-            var drawingsMenu = new Menu("drawing.settings", "Draw settings");
+            var miscMenu = new Menu("misc.settings", "Misc settings");
             {
-                drawingsMenu.Add(new MenuSeparator("General", "General"));
-                drawingsMenu.Add(new MenuBool("drawing.deactivate", "Disable all drawings"));
-                drawingsMenu.Add(new MenuBool("drawing.draw.spell.w", "W range", true));
-                drawingsMenu.Add(new MenuBool("drawing.draw.spell.e", "E range", true));
-                drawingsMenu.Add(new MenuBool("drawing.draw.spell.r", "R range", true));
+                miscMenu.Add(new MenuSeparator("Notifications", "Notifications"));
+                miscMenu.Add(new MenuBool("misc.notifications", "Permashow prioritized spell", true));
 
-                menu.Add(drawingsMenu);
+                miscMenu.Add(new MenuSeparator("Items", "Item usage"));
+                miscMenu.Add(new MenuBool("misc.items.tiamat", "Tiamat", true));
+                miscMenu.Add(new MenuBool("misc.items.hydra", "Ravenous Hydra", true));
+                miscMenu.Add(new MenuBool("misc.items.ghostblade", "Youmuu's Ghostblade", true));
+                miscMenu.Add(new MenuBool("misc.items.cutlass", "Bilgewater Cutlass", true));
+                miscMenu.Add(new MenuBool("misc.items.botrk", "Blade of the Ruined King", true));
+
+                miscMenu.Add(new MenuSeparator("Drawings", "Drawings"));
+                miscMenu.Add(new MenuBool("misc.drawing.deactivate", "Disable all drawings"));
+                miscMenu.Add(new MenuBool("misc.drawing.draw.spell.w", "W range", true));
+                miscMenu.Add(new MenuBool("misc.drawing.draw.spell.e", "E range", true));
+                miscMenu.Add(new MenuBool("misc.drawing.draw.spell.r", "R range", true));
+
+
+                menu.Add(miscMenu);
             }
 
             menu.Attach();
