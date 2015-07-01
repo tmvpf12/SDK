@@ -88,7 +88,7 @@
 
             if (Felicity <= 4)
             {
-                if (useQ && spells[Spells.Q].IsReady() && Player.Distance(target) < spells[Spells.Q].Range + 0x1e)
+                if (useQ && spells[Spells.Q].IsReady() && Player.Distance(target) < spells[Spells.Q].Range + 0x32)
                 {
                     spells[Spells.Q].Cast();
                 }
