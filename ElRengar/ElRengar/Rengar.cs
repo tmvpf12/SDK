@@ -14,6 +14,7 @@
     using LeagueSharp.SDK.Core.UI.IMenu.Values;
     using LeagueSharp.SDK.Core.Wrappers;
     using LeagueSharp.SDK.Core.Events;
+    using LeagueSharp.SDK.Core.Utils;
 
     using SharpDX;
 
@@ -40,7 +41,6 @@
                 Console.WriteLine("Champion is not supported.");
                 return;
             }
-
             try
             {
                 CreateMenu();
@@ -77,7 +77,7 @@
 
             if (Felicity <= 4)
             {
-                if (useQ && spells[Spells.Q].IsReady() && Player.Distance(target) < spells[Spells.Q].Range + 30)
+                if (useQ && spells[Spells.Q].IsReady() && Player.Distance(target) < spells[Spells.Q].Range + 0x1e)
                 {
                     spells[Spells.Q].Cast();
                 }
@@ -101,7 +101,7 @@
                 switch (prioritized.Index)
                 {
                     case 0:
-                        if (useQ && spells[Spells.Q].IsReady() && Player.Distance(target) < spells[Spells.Q].Range + 50)
+                        if (useQ && spells[Spells.Q].IsReady() && Player.Distance(target) < spells[Spells.Q].Range + 0x32)
                         {
                             spells[Spells.Q].Cast();
                         }
@@ -124,7 +124,7 @@
                         break;
                 }
 
-                if (useEoutOfRange && Player.Distance(target) > spells[Spells.Q].Range + 100)
+                if (useEoutOfRange && Player.Distance(target) > spells[Spells.Q].Range + 0x64)
                 {
                     spells[Spells.E].Cast(target);
                 }
@@ -175,9 +175,8 @@
             {
                 if (args.SData.Name == "RengarR")
                 {
-                    //Will need to add some L33T logic for the Ghostblade casting
                     if (Items.CanUseItem(3142))
-                        Items.UseItem(3142);
+                        DelayAction.Add(1000, () => Items.UseItem(3142));
                 }
             } 
         }
@@ -189,7 +188,7 @@
             if (!target.IsValidTarget())
                 return;
 
-            if (orbwalk.Type == OrbwalkerType.AfterAttack && spells[Spells.Q].IsReady() && target.IsValidTarget() && Felicity == 5 && ActiveMode == OrbwalkerMode.Hybrid || ActiveMode == OrbwalkerMode.Orbwalk)
+            if (orbwalk.Type == OrbwalkerType.AfterAttack && spells[Spells.Q].IsReady() && target.IsValidTarget() && Felicity == 0x5 && ActiveMode == OrbwalkerMode.Hybrid || ActiveMode == OrbwalkerMode.Orbwalk)
             {
                 spells[Spells.Q].Cast();
             }
@@ -212,7 +211,7 @@
                     switch (prioritized.Index)
                     {
                         case 0:
-                            if (spells[Spells.Q].IsReady() && Player.Distance(target) < spells[Spells.Q].Range + 50)
+                            if (spells[Spells.Q].IsReady() && Player.Distance(target) < spells[Spells.Q].Range + 0x32)
                             {
                                 spells[Spells.Q].Cast();
                             }
@@ -234,8 +233,6 @@
                 return;
             }
         }
-
-        
 
         #endregion
     }
