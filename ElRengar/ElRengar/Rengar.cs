@@ -29,7 +29,7 @@
 
         public static Dictionary<Spells, Spell> spells = new Dictionary<Spells, Spell>()
         {
-            { Spells.Q, new Spell(SpellSlot.Q, Player.AttackRange) },
+            { Spells.Q, new Spell(SpellSlot.Q, 250) },
             { Spells.W, new Spell(SpellSlot.W, 500) },
             { Spells.E, new Spell(SpellSlot.E, 1000) },
             { Spells.R, new Spell(SpellSlot.R, 2000) }
