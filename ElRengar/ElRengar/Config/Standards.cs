@@ -124,7 +124,7 @@ namespace ElRengar.Config
 
         protected static void ItemHandler(Obj_AI_Base target)
         {
-            if (Player.IsDashing())
+            if (Player.IsDashing() || !target.IsValidTarget())
             {
                 return;
             }
@@ -132,10 +132,12 @@ namespace ElRengar.Config
             if (Items.CanUseItem(3074)) Items.UseItem(3074); //Hydra
             if (Items.CanUseItem(3077)) Items.UseItem(3077); //Tiamat
             if (Items.CanUseItem(3142)) Items.UseItem(3142); //Ghostblade 
+            if (Items.CanUseItem(3144)) Items.UseItem(3144); //Cutlass
+            if (Items.CanUseItem(3153)) Items.UseItem(3153); //Botrk
 
-            if (Player.Distance(target.ServerPosition) <= Cutlass.Range && Cutlass.IsReady && Cutlass.IsOwned() 
+            /*if (Player.Distance(target.ServerPosition) <= Cutlass.Range && Cutlass.IsReady && Cutlass.IsOwned() 
                 || Player.Distance(target.ServerPosition) <= Botrk.Range && Botrk.IsReady && Cutlass.IsOwned())
-                Cutlass.Cast(target); Botrk.Cast(target);
+                Cutlass.Cast(target); Botrk.Cast(target);*/
         }
 
         protected static void NotificationHandler()

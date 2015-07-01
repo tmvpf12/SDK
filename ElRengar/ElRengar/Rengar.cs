@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.Tracing;
+    using System.Drawing;
     using System.Linq;
 
     using ElRengar.Config;
@@ -14,9 +15,12 @@
     using LeagueSharp.SDK.Core.UI.IMenu.Values;
     using LeagueSharp.SDK.Core.Wrappers;
     using LeagueSharp.SDK.Core.Events;
+    using LeagueSharp.SDK.Core.IDrawing;
     using LeagueSharp.SDK.Core.Utils;
 
     using SharpDX;
+
+    using Color = SharpDX.Color;
 
     internal class Rengar : Standards
     {
@@ -43,8 +47,8 @@
             }
             try
             {
-                Cutlass = new Items.Item(3144, 450f);
-                Botrk = new Items.Item(3153, 450f);
+                //Cutlass = new Items.Item(3144, 450f);
+                //Botrk = new Items.Item(3153, 450f);
                 spells[Spells.E].SetSkillshot(0.25f, 70f, 1500f, true, SkillshotType.SkillshotLine);
 
                 CreateMenu();
@@ -201,14 +205,71 @@
 
         private static void DoLaneClear()
         {
+            var useQ = menu["laneclear.settings"]["laneclear.spell.q"].GetValue<MenuBool>().Value;
+            var useW = menu["laneclear.settings"]["laneclear.spell.w"].GetValue<MenuBool>().Value;
+            var useE = menu["laneclear.settings"]["laneclear.spell.e"].GetValue<MenuBool>().Value;
+            var saveFerocity = menu["laneclear.settings"]["laneclear.save.ferocity"].GetValue<MenuBool>().Value;
+            var prioritized = menu["laneclear.settings"]["laneclear.prioritize"].GetValue<MenuList>();
+
             var minions =
                 GameObjects.EnemyMinions.Where(m => m.IsValid && m.Distance(Player) < spells[Spells.W].Range).ToList();
 
             if (!minions.Any())
                 return;
 
-            Console.WriteLine(minions.Count());
+            if (Felicity <= 4)
+            {
+                if (useQ && spells[Spells.Q].IsReady()
+                    && Player.Distance(minions[0]) < spells[Spells.Q].Range + 0x32)
+                {
+                    spells[Spells.Q].Cast();
+                }
 
+                if (useW && spells[Spells.W].IsReady() && minions.Count() > 2 && Vector3.Distance(Player.ServerPosition, minions[0].ServerPosition) < spells[Spells.W].Range * 0x1 / 0x3)
+                {
+                    spells[Spells.W].Cast();
+                }
+
+                if (useE && spells[Spells.E].IsReady() && Vector3.Distance(Player.ServerPosition, minions[0].ServerPosition) <= LeapRange)
+                {
+                    spells[Spells.E].Cast(minions[0]);
+                }
+            }
+
+            if (Felicity == 5)
+            {
+                if (saveFerocity) return;
+
+                switch (prioritized.Index)
+                {
+                    case 0:
+                        if (useQ && spells[Spells.Q].IsReady()
+                            && Player.Distance(minions[0]) < spells[Spells.Q].Range + 0x32)
+                        {
+                            spells[Spells.Q].Cast();
+                        }
+                        break;
+
+                    case 1:
+                        if (useW && spells[Spells.W].IsReady() && minions.Count() > 2 && Vector3.Distance(Player.ServerPosition, minions[0].ServerPosition) < spells[Spells.W].Range * 0x1 / 0x3)
+                        {
+                            spells[Spells.W].Cast();
+                        }
+                        break;
+
+                    case 2:
+                        if (useE && spells[Spells.E].IsReady() && Vector3.Distance(Player.ServerPosition, minions[0].ServerPosition) <= LeapRange)
+                        {
+                            spells[Spells.E].Cast(minions[0]);
+                        }
+                        break;
+                }
+            }
+
+            Drawing.DrawText(
+                    Drawing.Width * 0.44f, Drawing.Height * 0.80f, System.Drawing.Color.Red, minions.Count().ToString());
+
+            Console.WriteLine(minions.Count());
         }
 
         private static void DoLastHit()
