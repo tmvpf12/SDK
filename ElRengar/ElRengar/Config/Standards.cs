@@ -214,6 +214,17 @@ namespace ElRengar.Config
                 menu.Add(jungleClearMenu);
             }
 
+            //healMenu.AddItem(new MenuItem("ElRengar.Heal.AutoHeal", "Auto heal yourself").SetValue(true));
+            //healMenu.AddItem(new MenuItem("ElRengar.Heal.HP", "Self heal at >= ").SetValue(new Slider(25, 1, 100)));
+            var healMenu = new Menu("heal.settings", "Heal settings");
+            {
+                healMenu.Add(new MenuSeparator("General", "General"));
+                healMenu.Add(new MenuBool("heal.activated", "Use W", true));
+                healMenu.Add(new MenuSlider("heal.player.hp", "Player health percentage", 25, 1, 100));
+
+                menu.Add(healMenu);
+            }
+
             var miscMenu = new Menu("misc.settings", "Misc settings");
             {
                 miscMenu.Add(new MenuSeparator("Notifications", "Notifications"));
@@ -228,6 +239,7 @@ namespace ElRengar.Config
 
                 miscMenu.Add(new MenuSeparator("Drawings", "Drawings"));
                 miscMenu.Add(new MenuBool("misc.drawing.deactivate", "Disable all drawings"));
+                miscMenu.Add(new MenuBool("misc.drawing.draw.spell.q", "Q range", true));
                 miscMenu.Add(new MenuBool("misc.drawing.draw.spell.w", "W range", true));
                 miscMenu.Add(new MenuBool("misc.drawing.draw.spell.e", "E range", true));
                 miscMenu.Add(new MenuBool("misc.drawing.draw.spell.r", "R range", true));

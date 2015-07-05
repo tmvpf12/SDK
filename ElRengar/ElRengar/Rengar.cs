@@ -2,8 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics.Tracing;
-    using System.Drawing;
     using System.Linq;
 
     using ElRengar.Config;
@@ -15,9 +13,7 @@
     using LeagueSharp.SDK.Core.UI.IMenu.Values;
     using LeagueSharp.SDK.Core.Wrappers;
     using LeagueSharp.SDK.Core.Events;
-    using LeagueSharp.SDK.Core.IDrawing;
     using LeagueSharp.SDK.Core.Utils;
-
 
     using SharpDX;
 
@@ -372,7 +368,7 @@
 
         private static void DoLastHit()
         {
-
+          
         }
 
         private static void OnUpdate(EventArgs args)
@@ -400,6 +396,23 @@
             }
 
             NotificationHandler();
+            HealHandler();
+        }
+
+        private static void HealHandler()
+        {
+            if (Player.IsRecalling() || Player.InFountain() || Felicity <= 4)
+                return;
+
+            var useW = menu["heal.settings"]["heal.activated"].GetValue<MenuBool>().Value;
+            var playerHealth = menu["heal.settings"]["heal.player.hp"].GetValue<MenuSlider>().Value;
+
+            Console.WriteLine(playerHealth);
+
+            if (useW && (Player.Health / Player.MaxHealth) * 100 <= playerHealth && spells[Spells.W].IsReady())
+            {
+                spells[Spells.W].Cast();
+            }
         }
 
         private static void OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
@@ -417,7 +430,7 @@
         #region OnAction
         private static void OnAction(object sender, Orbwalker.OrbwalkerActionArgs orbwalk)
         {
-            var target = orbwalk.Target; // I hope this is fine.
+            var target = orbwalk.Target;
             if (!target.IsValidTarget())
                 return;
 
@@ -431,11 +444,15 @@
         private static void OnDraw(EventArgs args)
         {
             var drawNone = menu["misc.settings"]["misc.drawing.deactivate"].GetValue<MenuBool>().Value;
+            var drawQ = menu["misc.settings"]["misc.drawing.draw.spell.q"].GetValue<MenuBool>().Value;
             var drawW = menu["misc.settings"]["misc.drawing.draw.spell.w"].GetValue<MenuBool>().Value;
             var drawE = menu["misc.settings"]["misc.drawing.draw.spell.e"].GetValue<MenuBool>().Value;
             var drawR = menu["misc.settings"]["misc.drawing.draw.spell.r"].GetValue<MenuBool>().Value;
 
             if (drawNone) return;
+
+            if (drawQ && Rengar.spells[Spells.Q].Level > 0)
+                Drawing.DrawCircle(GameObjects.Player.Position, Rengar.spells[Spells.Q].Range, Color.Blue);
 
             if (drawW && Rengar.spells[Spells.W].Level > 0)
                 Drawing.DrawCircle(GameObjects.Player.Position, Rengar.spells[Spells.W].Range, Color.Blue);

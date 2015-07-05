@@ -32,6 +32,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LeagueSharp.SDK">
+      <HintPath>..\..\..\..\..\Desktop\LeagueSharp\Leaguesharp\LeagueSharp\LeagueSharp\System\LeagueSharp.SDK.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX">
+      <HintPath>..\..\..\..\..\Desktop\LeagueSharp\Leaguesharp\LeagueSharp\System\SharpDX.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -43,19 +49,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseHandler.cs" />
+    <Compile Include="Champions\Darius\Darius.cs" />
+    <Compile Include="Champions\Katarina\Katarina.cs" />
+    <Compile Include="Champions\Malphite\Malphite.cs" />
+    <Compile Include="Champions\Nasus\Nasus.cs" />
+    <Compile Include="Champions\Nunu\Nunu.cs" />
+    <Compile Include="Champions\Ryze\Ryze.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Champions\Darius\" />
-    <Folder Include="Champions\Katarina\" />
-    <Folder Include="Champions\Malphite\" />
-    <Folder Include="Champions\Nasus\" />
-    <Folder Include="Champions\Ryze\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
