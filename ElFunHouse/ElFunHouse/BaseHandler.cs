@@ -8,6 +8,14 @@ namespace ElFunHouse
 {
     class BaseHandler
     {
-
+        internal static void Load(string champName)
+        {
+            switch (champName)
+            {
+                case "Alistar":
+                    Champions.Alistar.Alistar.OnLoad();
+                    break;
+            }
+        }
     }
 }
