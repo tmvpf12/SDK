@@ -418,8 +418,7 @@
                 return;
             }
             
-            Orbwalker.Orbwalk(target: null, position: Game.CursorPos);
-
+            Player.IssueOrder(GameObjectOrder.MoveTo, Game.CursorPos);
 
             var target = TargetSelector.GetTarget(spells[Spells.E].Range);
             if (target == null || !target.IsValidTarget())
@@ -467,8 +466,6 @@
 
         private static void TripleQHandler()
         {
-            
-
             var useTripleq = menu["combo.settings"]["combo.spell.triple.q"].GetValue<MenuKeyBind>().Active;
             if (!useTripleq || Felicity != 5 || !spells[Spells.Q].IsReady() || !spells[Spells.R].IsReady())
             {
@@ -478,7 +475,7 @@
                 return;
             }
 
-            Orbwalker.Orbwalk(target: null, position: Game.CursorPos);
+            Player.IssueOrder(GameObjectOrder.MoveTo, Game.CursorPos);
             
             var target = TargetSelector.GetTarget(spells[Spells.W].Range);
             if (target == null || !target.IsValidTarget())
