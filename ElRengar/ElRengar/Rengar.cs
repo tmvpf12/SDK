@@ -408,7 +408,6 @@
 
         private static void TripleEHandler()
         {
-            Orbwalker.Orbwalk(target: null, position: Game.CursorPos);
 
             var useTripleE = menu["combo.settings"]["combo.spell.triple.e"].GetValue<MenuKeyBind>().Active;
             if (!useTripleE || Felicity != 5 || !spells[Spells.E].IsReady() || !spells[Spells.R].IsReady())
@@ -418,6 +417,9 @@
                     Drawing.Width * 0.44f, Drawing.Height * 0.80f, System.Drawing.Color.Red, "Triple E can't be activated. You don't meet the requirements.");
                 return;
             }
+            
+            Orbwalker.Orbwalk(target: null, position: Game.CursorPos);
+
 
             var target = TargetSelector.GetTarget(spells[Spells.E].Range);
             if (target == null || !target.IsValidTarget())
@@ -465,7 +467,7 @@
 
         private static void TripleQHandler()
         {
-            Orbwalker.Orbwalk(target: null, position: Game.CursorPos);
+            
 
             var useTripleq = menu["combo.settings"]["combo.spell.triple.q"].GetValue<MenuKeyBind>().Active;
             if (!useTripleq || Felicity != 5 || !spells[Spells.Q].IsReady() || !spells[Spells.R].IsReady())
@@ -476,6 +478,8 @@
                 return;
             }
 
+            Orbwalker.Orbwalk(target: null, position: Game.CursorPos);
+            
             var target = TargetSelector.GetTarget(spells[Spells.W].Range);
             if (target == null || !target.IsValidTarget())
             {
