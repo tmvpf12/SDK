@@ -166,8 +166,9 @@ namespace ElRengar.Config
                 comboMenu.Add(new MenuBool("combo.spell.smite", "Use smite", true));
                 comboMenu.Add(new MenuSeparator("Prioritized", "Prioritized"));
                 comboMenu.Add(new MenuList<string>("combo.prioritize", "Prioritized spell", new[] { "Q", "W", "E" }));
-                comboMenu.Add(new MenuSeparator("God mode", "God mode"));
+                comboMenu.Add(new MenuSeparator("God modes", "God modes"));
                 comboMenu.Add(new MenuKeyBind("combo.spell.triple.q", "Triple Q", Keys.T, KeyBindType.Press));
+                comboMenu.Add(new MenuKeyBind("combo.spell.triple.e", "Triple E", Keys.U, KeyBindType.Press));
 
                 menu.Add(comboMenu);
             }
@@ -194,7 +195,7 @@ namespace ElRengar.Config
                 laneclearMenu.Add(new MenuBool("laneclear.items.hydra", "Ravenous Hydra", true));
                 laneclearMenu.Add(new MenuSeparator("Ferocity", "Ferocity"));
                 laneclearMenu.Add(new MenuBool("laneclear.save.ferocity", "Save ferocity", true));
-                laneclearMenu.Add(new MenuList<string>("laneclear.prioritize", "Prioritized spell", new[] { "Q", "W", "E" }));
+                laneclearMenu.Add(new MenuList<string>("laneclear.prioritize", "Prioritized spell", objects: new[] { "Q", "W", "E" }));
 
                 menu.Add(laneclearMenu);
             }
@@ -209,7 +210,7 @@ namespace ElRengar.Config
                 jungleClearMenu.Add(new MenuBool("jungleclear.items.hydra", "Ravenous Hydra", true));
                 jungleClearMenu.Add(new MenuSeparator("Ferocity", "Ferocity"));
                 jungleClearMenu.Add(new MenuBool("jungleclear.save.ferocity", "Save ferocity", true));
-                jungleClearMenu.Add(new MenuList<string>("jungleclear.prioritize", "Prioritized spell", new[] { "Q", "W", "E" }));
+                jungleClearMenu.Add(new MenuList<string>("jungleclear.prioritize", "Prioritized spell", objects: new[] { "Q", "W", "E" }));
 
                 menu.Add(jungleClearMenu);
             }
@@ -220,7 +221,7 @@ namespace ElRengar.Config
             {
                 healMenu.Add(new MenuSeparator("General", "General"));
                 healMenu.Add(new MenuBool("heal.activated", "Use W", true));
-                healMenu.Add(new MenuSlider("heal.player.hp", "Player health percentage", 25, 1, 100));
+                healMenu.Add(new MenuSlider("heal.player.hp", "Player health percentage", value: 25, minValue: 1, maxValue: 100));
 
                 menu.Add(healMenu);
             }

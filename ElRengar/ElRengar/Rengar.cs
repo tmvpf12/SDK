@@ -155,7 +155,7 @@
                 ItemHandler(target);
             }
         }
-
+        #region DoHybrid
         private static void DoHybrid()
         {
             var target = TargetSelector.GetTarget(spells[Spells.E].Range);
@@ -217,7 +217,9 @@
                 }
             }
         }
+        #endregion
 
+        #region DoJungleClear
         private static void DoJungleClear()
         {
             var useQ = menu["jungleclear.settings"]["jungleclear.spell.q"].GetValue<MenuBool>().Value;
@@ -287,7 +289,9 @@
                 Items.UseItem(3074); Items.UseItem(3077);
             }
         }
+        #endregion
 
+        #region DoLaneClear
         private static void DoLaneClear()
         {
             var useQ = menu["laneclear.settings"]["laneclear.spell.q"].GetValue<MenuBool>().Value;
@@ -365,6 +369,7 @@
                 Console.WriteLine(minions.Count());
             }
         }
+        #endregion
 
         private static void DoLastHit()
         {
@@ -397,6 +402,124 @@
 
             NotificationHandler();
             HealHandler();
+            TripleqHandler();
+            TripleEHandler();
+        }
+
+        private static void TripleEHandler()
+        {
+            Orbwalker.Orbwalk(target: null, position: Game.CursorPos);
+
+            var useTripleE = menu["combo.settings"]["combo.spell.triple.e"].GetValue<MenuKeyBind>().Active;
+            if (!useTripleE || Felicity != 5 || !spells[Spells.E].IsReady() || !spells[Spells.R].IsReady())
+            {
+                //Will be replaced with the old notification, not in SDK atm.
+                Drawing.DrawText(
+                    Drawing.Width * 0.44f, Drawing.Height * 0.80f, System.Drawing.Color.Red, "Triple E can't be activated. You don't meet the requirements.");
+                return;
+            }
+
+            var target = TargetSelector.GetTarget(spells[Spells.E].Range);
+            if (target == null || !target.IsValidTarget())
+            {
+                return;
+            }
+
+            //Cast R on Player when selected target is in R range, Player needs to have 5 ferocity before ult is possible
+            if (spells[Spells.R].IsReady() && spells[Spells.Q].IsReady() && Player.Distance(target) <= spells[Spells.R].Range && Felicity == 5)
+            {
+                spells[Spells.R].Cast();
+            }
+
+            //Check if Player is in R and if Player has 5 ferocity
+            if (spells[Spells.E].IsReady() && Felicity == 5 && RengarR && Player.Distance(target) <= spells[Spells.E].Range)
+            {
+                //Cast the empowered E to target
+                spells[Spells.E].Cast(target);
+            }
+
+            //After the first E snare we cast E again, mid jump
+            if (spells[Spells.E].IsReady() && Felicity <= 4 && !RengarR && Player.Distance(target) <= spells[Spells.E].Range)
+            {
+                spells[Spells.E].Cast(target);
+            }
+
+            //After we land we cast W
+            if (spells[Spells.W].IsReady() && Vector3.Distance(Player.ServerPosition, target.ServerPosition) < spells[Spells.W].Range * 0x1 / 0x3)
+            {
+                spells[Spells.W].Cast();
+            }
+
+            //After W we cast Q so we have 5 stacks again
+            if (spells[Spells.Q].IsReady() && !RengarR && Player.Distance(target) <= spells[Spells.Q].Range)
+            {
+                spells[Spells.Q].Cast();
+            }
+
+            //After Q cast we have 5 ferocity to cast a snare again.
+            if (spells[Spells.E].IsReady() && Felicity == 5 && !RengarR && Player.Distance(target) <= spells[Spells.E].Range)
+            {
+                spells[Spells.E].Cast(target);
+            }
+        }
+
+        private static void TripleqHandler()
+        {
+            Orbwalker.Orbwalk(target: null, position: Game.CursorPos);
+
+            var useTripleq = menu["combo.settings"]["combo.spell.triple.q"].GetValue<MenuKeyBind>().Active;
+            if (!useTripleq || Felicity != 5 || !spells[Spells.Q].IsReady() || !spells[Spells.R].IsReady())
+            {
+                //Will be replaced with the old notification, not in SDK atm.
+                Drawing.DrawText(
+                    Drawing.Width * 0.44f, Drawing.Height * 0.80f, System.Drawing.Color.Red, "Triple Q can't be activated. You don't meet the requirements.");
+                return;
+            }
+
+            var target = TargetSelector.GetTarget(spells[Spells.W].Range);
+            if (target == null || !target.IsValidTarget())
+            {
+                return;
+            }
+
+            Orbwalker.Orbwalk(target: target, position: Game.CursorPos);
+
+            //Cast R on Player when selected target is in R range, Player needs to have 5 ferocity before ult is possible
+            if (spells[Spells.R].IsReady() && spells[Spells.Q].IsReady() && Player.Distance(target) <= spells[Spells.R].Range && Felicity == 5)
+            {
+                spells[Spells.R].Cast();
+            }
+
+            //Check if Player is in R and if Player has 5 ferocity
+            if (spells[Spells.Q].IsReady() && Felicity == 5 && RengarR && Player.Distance(target) <= spells[Spells.W].Range)
+            {
+                spells[Spells.Q].Cast();
+            }
+
+            if (spells[Spells.Q].IsReady() && Felicity == 5 && !RengarR && Player.Distance(target) <= spells[Spells.W].Range)
+            {
+                spells[Spells.Q].Cast();
+            }
+
+            //Q is casted, Player should have 3 Ferocity by now.
+            if (Felicity <= 4)
+            {
+                if (spells[Spells.Q].IsReady())
+                {
+                    spells[Spells.Q].Cast();
+                }
+
+                if (spells[Spells.W].IsReady() && Vector3.Distance(Player.ServerPosition, target.ServerPosition) < spells[Spells.W].Range * 0x1 / 0x3)
+                {
+                    spells[Spells.W].Cast();
+                }
+
+                if (spells[Spells.E].IsReady() && Player.Distance(target) <= spells[Spells.E].Range)
+                {
+                    //waiting for prediction
+                        spells[Spells.E].Cast(target);
+                }
+            }
         }
 
         private static void HealHandler()
