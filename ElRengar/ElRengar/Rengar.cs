@@ -402,7 +402,7 @@
 
             NotificationHandler();
             HealHandler();
-            TripleqHandler();
+            TripleQHandler();
             TripleEHandler();
         }
 
@@ -463,7 +463,7 @@
             }
         }
 
-        private static void TripleqHandler()
+        private static void TripleQHandler()
         {
             Orbwalker.Orbwalk(target: null, position: Game.CursorPos);
 
