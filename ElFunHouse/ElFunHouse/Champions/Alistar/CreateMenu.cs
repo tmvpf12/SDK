@@ -42,6 +42,21 @@ namespace ElFunHouse.Champions.Alistar
                 menu.Add(harassMenu);
             }
 
+            var healSettings = new Menu("heal.settings", "Heal settings");
+            {
+                healSettings.Add(new MenuSeparator("General", "Alistar heal"));
+                healSettings.Add(new MenuBool("heal.activated", "Use E", true));
+                healSettings.Add(new MenuSlider("heal.player.hp", "Player health percentage", value: 55, minValue: 1, maxValue: 100));
+
+                healSettings.Add(new MenuSeparator("ally", "Allies settings"));
+                healSettings.Add(new MenuBool("heal.ally.activated", "Use E", true));
+                healSettings.Add(new MenuSlider("heal.ally.hp", "Ally health percentage", value: 55, minValue: 1, maxValue: 100));
+
+                healSettings.Add(new MenuSeparator("player.mana", "Player mana"));
+                healSettings.Add(new MenuSlider("heal.player.mana", "Player mana percentage", value: 55, minValue: 1, maxValue: 100));
+
+                menu.Add(healSettings);
+            }
 
             var flashMenu = new Menu("flash.settings", "Flash settings");
             {
@@ -49,6 +64,17 @@ namespace ElFunHouse.Champions.Alistar
                 flashMenu.Add(new MenuKeyBind("flash.combo", "Flash combo", Keys.T, KeyBindType.Press));
 
                 menu.Add(flashMenu);
+            }
+
+            var miscMenu = new Menu("misc.settings", "Misc settings");
+            {
+                miscMenu.Add(new MenuSeparator("Drawings", "Drawings"));
+                miscMenu.Add(new MenuBool("misc.drawing.deactivate", "Disable all drawings"));
+                miscMenu.Add(new MenuBool("misc.drawing.draw.spell.q", "Q range", true));
+                miscMenu.Add(new MenuBool("misc.drawing.draw.spell.w", "W range", true));
+                miscMenu.Add(new MenuBool("misc.drawing.draw.spell.e", "E range", true));
+
+                menu.Add(miscMenu);
             }
 
             var creditsMenu = new Menu("credits.settings", "Credits");

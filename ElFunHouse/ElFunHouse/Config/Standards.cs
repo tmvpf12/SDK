@@ -36,5 +36,18 @@
                 return ObjectManager.Player;
             }
         }
+
+        public static OrbwalkerMode ActiveMode
+        {
+            get; set;
+        }
+
+        public static int Mana
+        {
+            get
+            {
+                return (int)ObjectManager.Player.Mana;
+            }
+        }
     }
 }

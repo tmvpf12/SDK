@@ -15,6 +15,7 @@ namespace ElFunHouse.Champions.Alistar
     using LeagueSharp.SDK.Core.UI.IMenu.Values;
     using LeagueSharp.SDK.Core.Utils;
     using LeagueSharp.SDK.Core.Wrappers;
+    using Color = System.Drawing.Color;
 
     public class Alistar : Standards
     {
@@ -47,6 +48,7 @@ namespace ElFunHouse.Champions.Alistar
         {
             CreateMenu.Load();
             Game.OnUpdate += OnUpdate;
+            Drawing.OnDraw += OnDraw;
             Flash = Player.GetSpellSlot("SummonerFlash");
             Console.WriteLine("Alistar");
         }
@@ -95,6 +97,29 @@ namespace ElFunHouse.Champions.Alistar
             }
         }
 
+        private static void HealHandler()
+        {
+            var useE = menu["heal.settings"]["heal.activated"].GetValue<MenuBool>().Value;
+            var playerHealth = menu["heal.settings"]["heal.player.hp"].GetValue<MenuSlider>().Value;
+            var allyHealth = menu["heal.settings"]["heal.ally.hp"].GetValue<MenuSlider>().Value;
+            var playerMana = menu["heal.settings"]["heal.player.mana"].GetValue<MenuSlider>().Value;
+            var healAlly = menu["heal.settings"]["heal.ally.activated"].GetValue<MenuBool>().Value;
+
+            if (Player.IsRecalling() || Player.InFountain() || Mana < playerMana || Orbwalker.ActiveMode == OrbwalkerMode.Orbwalk)
+                return;
+
+            if (useE && (Player.Health / Player.MaxHealth) * 100 < playerHealth)
+            {
+                spells[Spells.E].Cast();
+            }
+
+            foreach (var ally in ObjectManager.Get<Obj_AI_Hero>().Where(h => h.IsAlly && !h.IsZombie && !h.IsInvulnerable && !h.IsMe).Where(ally => healAlly && (ally.Health / ally.MaxHealth) * 100 <= allyHealth && spells[Spells.E].IsInRange(ally)))
+            {
+                spells[Spells.E].Cast();
+                Console.WriteLine("Ally in range : "  + ally);
+            }
+        }
+
         private static void FlashHandler()
         {
             var useFlashCombo = menu["flash.settings"]["flash.combo"].GetValue<MenuKeyBind>().Active;
@@ -115,7 +140,26 @@ namespace ElFunHouse.Champions.Alistar
             Player.Spellbook.CastSpell(Flash, target.Position);
             spells[Spells.Q].Cast();
 
-            DelayAction.Add((int) 1000, () => spells[Spells.W].Cast(target));
+            //DelayAction.Add((int) 1000, () => spells[Spells.W].Cast(target));
+        }
+
+        private static void OnDraw(EventArgs args)
+        {
+            var drawNone = menu["misc.settings"]["misc.drawing.deactivate"].GetValue<MenuBool>().Value;
+            var drawQ = menu["misc.settings"]["misc.drawing.draw.spell.q"].GetValue<MenuBool>().Value;
+            var drawW = menu["misc.settings"]["misc.drawing.draw.spell.w"].GetValue<MenuBool>().Value;
+            var drawE = menu["misc.settings"]["misc.drawing.draw.spell.e"].GetValue<MenuBool>().Value;
+
+            if (drawNone) return;
+
+            if (drawQ && spells[Spells.Q].Level > 0)
+                Drawing.DrawCircle(GameObjects.Player.Position, spells[Spells.Q].Range, color: Color.Blue);
+
+            if (drawW && spells[Spells.W].Level > 0)
+                Drawing.DrawCircle(GameObjects.Player.Position, spells[Spells.W].Range, color: Color.Blue);
+
+            if (drawE && spells[Spells.E].Level > 0)
+                Drawing.DrawCircle(GameObjects.Player.Position, spells[Spells.E].Range, color: Color.Blue);
         }
 
         private static void OnUpdate(EventArgs args)
@@ -130,8 +174,7 @@ namespace ElFunHouse.Champions.Alistar
                 case OrbwalkerMode.LastHit:
                     break;
 
-                case OrbwalkerMode.LaneClear:
-                 
+                case OrbwalkerMode.LaneClear: 
                     break;
 
                 case OrbwalkerMode.Hybrid:
@@ -140,6 +183,7 @@ namespace ElFunHouse.Champions.Alistar
             }
 
             FlashHandler();
+            HealHandler();
         }
     }
 }
