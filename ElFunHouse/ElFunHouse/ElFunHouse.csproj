@@ -60,6 +60,8 @@
     <Compile Include="Champions\Alistar\Alistar.cs" />
     <Compile Include="Champions\Alistar\CreateMenu.cs" />
     <Compile Include="Champions\Darius\Darius.cs" />
+    <Compile Include="Champions\Fiora\CreateMenu.cs" />
+    <Compile Include="Champions\Fiora\Fiora.cs" />
     <Compile Include="Champions\Katarina\Katarina.cs" />
     <Compile Include="Champions\Malphite\Malphite.cs" />
     <Compile Include="Champions\Nasus\Nasus.cs" />
