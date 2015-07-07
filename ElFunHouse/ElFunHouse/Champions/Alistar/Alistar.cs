@@ -36,11 +36,7 @@ namespace ElFunHouse.Champions.Alistar
         {
             get
             {
-                if (Player.Mana > Player.Spellbook.GetSpell(SpellSlot.Q).ManaCost + Player.Spellbook.GetSpell(SpellSlot.W).ManaCost)
-                {
-                    return true;
-                }
-                return false;
+                return Player.Mana > Player.Spellbook.GetSpell(SpellSlot.Q).ManaCost + Player.Spellbook.GetSpell(SpellSlot.W).ManaCost;
             }
         }
 

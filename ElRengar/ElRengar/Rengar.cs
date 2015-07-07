@@ -64,6 +64,46 @@
 
         #endregion
 
+
+        private static void OnUpdate(EventArgs args)
+        {
+            spells[Spells.R].Range = 1000 + spells[Spells.R].Level * 1000;
+
+            switch (Orbwalker.ActiveMode)
+            {
+                case OrbwalkerMode.Orbwalk:
+                    DoCombo();
+                    break;
+
+                case OrbwalkerMode.LastHit:
+                    DoLastHit();
+                    break;
+
+                case OrbwalkerMode.LaneClear:
+                    DoLaneClear();
+                    DoJungleClear();
+                    break;
+
+                case OrbwalkerMode.Hybrid:
+                    DoHybrid();
+                    break;
+            }
+
+            NotificationHandler();
+            HealHandler();
+
+            // blablabla will fix this later
+            if(menu["combo.settings"]["combo.spell.triple.q"].GetValue<MenuKeyBind>().Active)
+            {
+                TripleQHandler();
+            }
+
+            if (menu["combo.settings"]["combo.spell.triple.e"].GetValue<MenuKeyBind>().Active)
+            {
+                TripleEHandler();
+            }
+        }
+
         #region Methods
 
         private static void DoCombo()
@@ -376,58 +416,16 @@
           
         }
 
-        private static void OnUpdate(EventArgs args)
-        {
-            spells[Spells.R].Range = 1000 + spells[Spells.R].Level * 1000;
-
-            switch (Orbwalker.ActiveMode)
-            {
-                case OrbwalkerMode.Orbwalk:
-                    DoCombo();
-                    break;
-
-                case OrbwalkerMode.LastHit:
-                    DoLastHit();
-                    break;
-
-                case OrbwalkerMode.LaneClear:
-                    DoLaneClear();
-                    DoJungleClear();
-                    break;
-
-                case OrbwalkerMode.Hybrid:
-                    DoHybrid();
-                    break;
-            }
-
-            NotificationHandler();
-            HealHandler();
-            TripleQHandler();
-            TripleEHandler();
-        }
-
         private static void TripleEHandler()
         {
-
-            var useTripleE = menu["combo.settings"]["combo.spell.triple.e"].GetValue<MenuKeyBind>().Active;
-            if (!useTripleE || Felicity != 5 || !spells[Spells.E].IsReady() || !spells[Spells.R].IsReady())
-            {
-                //Will be replaced with the old notification, not in SDK atm.
-                Drawing.DrawText(
-                    Drawing.Width * 0.44f, Drawing.Height * 0.80f, System.Drawing.Color.Red, "Triple E can't be activated. You don't meet the requirements.");
-                return;
-            }
-            
-            Player.IssueOrder(GameObjectOrder.MoveTo, Game.CursorPos);
-
-            var target = TargetSelector.GetTarget(spells[Spells.E].Range);
+            var target = TargetSelector.GetTarget(spells[Spells.R].Range);
             if (target == null || !target.IsValidTarget())
-            {
                 return;
-            }
+
+            // Orbwalker.Orbwalk(target: target, position: Game.CursorPos);
 
             //Cast R on Player when selected target is in R range, Player needs to have 5 ferocity before ult is possible
-            if (spells[Spells.R].IsReady() && spells[Spells.Q].IsReady() && Player.Distance(target) <= spells[Spells.R].Range && Felicity == 5)
+            if (spells[Spells.R].IsReady() && spells[Spells.E].IsReady() && Player.Distance(target) <= spells[Spells.R].Range && Felicity == 5)
             {
                 spells[Spells.R].Cast();
             }
@@ -440,7 +438,7 @@
             }
 
             //After the first E snare we cast E again, mid jump
-            if (spells[Spells.E].IsReady() && Felicity <= 4 && !RengarR && Player.Distance(target) <= spells[Spells.E].Range)
+            if (spells[Spells.E].IsReady() && Player.IsDashing() && Felicity <= 4 && !RengarR && Player.Distance(target) <= spells[Spells.E].Range)
             {
                 spells[Spells.E].Cast(target);
             }
@@ -466,38 +464,29 @@
 
         private static void TripleQHandler()
         {
-            var useTripleq = menu["combo.settings"]["combo.spell.triple.q"].GetValue<MenuKeyBind>().Active;
-            if (!useTripleq || Felicity != 5 || !spells[Spells.Q].IsReady() || !spells[Spells.R].IsReady())
-            {
-                //Will be replaced with the old notification, not in SDK atm.
-                Drawing.DrawText(
-                    Drawing.Width * 0.44f, Drawing.Height * 0.80f, System.Drawing.Color.Red, "Triple Q can't be activated. You don't meet the requirements.");
-                return;
-            }
-
-            Player.IssueOrder(GameObjectOrder.MoveTo, Game.CursorPos);
-            
-            var target = TargetSelector.GetTarget(spells[Spells.W].Range);
+            var target = TargetSelector.GetTarget(spells[Spells.R].Range);
             if (target == null || !target.IsValidTarget())
             {
                 return;
             }
 
-            Orbwalker.Orbwalk(target: target, position: Game.CursorPos);
+            //Orbwalker.Orbwalk(target: target, position: Game.CursorPos);
 
             //Cast R on Player when selected target is in R range, Player needs to have 5 ferocity before ult is possible
-            if (spells[Spells.R].IsReady() && spells[Spells.Q].IsReady() && Player.Distance(target) <= spells[Spells.R].Range && Felicity == 5)
+            if (spells[Spells.R].IsReady() && spells[Spells.Q].IsReady()  && Player.Distance(target) <= spells[Spells.R].Range && Felicity == 5)
             {
                 spells[Spells.R].Cast();
             }
 
             //Check if Player is in R and if Player has 5 ferocity
-            if (spells[Spells.Q].IsReady() && Felicity == 5 && RengarR && Player.Distance(target) <= spells[Spells.W].Range)
+            if (spells[Spells.Q].IsReady() && Felicity == 5 && RengarR
+                && Player.Distance(target) <= spells[Spells.W].Range)
             {
                 spells[Spells.Q].Cast();
             }
 
-            if (spells[Spells.Q].IsReady() && Felicity == 5 && !RengarR && Player.Distance(target) <= spells[Spells.W].Range)
+            if (spells[Spells.Q].IsReady() && Felicity == 5 && !RengarR
+                && Player.Distance(target) <= spells[Spells.W].Range)
             {
                 spells[Spells.Q].Cast();
             }
@@ -510,7 +499,9 @@
                     spells[Spells.Q].Cast();
                 }
 
-                if (spells[Spells.W].IsReady() && Vector3.Distance(Player.ServerPosition, target.ServerPosition) < spells[Spells.W].Range * 0x1 / 0x3)
+                if (spells[Spells.W].IsReady()
+                    && Vector3.Distance(Player.ServerPosition, target.ServerPosition)
+                    < spells[Spells.W].Range * 0x1 / 0x3)
                 {
                     spells[Spells.W].Cast();
                 }
@@ -518,7 +509,7 @@
                 if (spells[Spells.E].IsReady() && Player.Distance(target) <= spells[Spells.E].Range)
                 {
                     //waiting for prediction
-                        spells[Spells.E].Cast(target);
+                    spells[Spells.E].Cast(target);
                 }
             }
         }
