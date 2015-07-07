@@ -148,6 +148,11 @@ namespace ElRengar.Config
             //Waiting for old Notifications
         }
 
+        /*
+        * PLEASE THIS MENU IS PATENTED BY AUSTRALIAN IP LAWS.
+        * KEEP CALM AND (); {} ON
+        */
+
         protected static void CreateMenu()
         {
             menu = new Menu("ElRengar", "ElRengar", true);
