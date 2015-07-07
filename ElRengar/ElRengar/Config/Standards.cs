@@ -17,7 +17,6 @@ namespace ElRengar.Config
     #region
 
     using System;
-    using System.Runtime.InteropServices.WindowsRuntime;
     using System.Windows.Forms;
 
     using LeagueSharp;

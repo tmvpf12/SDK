@@ -21,7 +21,7 @@ namespace ElFunHouse.Champions.Alistar
 
         public static void Load()
         {
-            menu = new Menu("ElAlistar", "ElAlistar", true);
+            menu = new Menu("FunHouse Alistar", "FunHouse Alistar", true);
             Bootstrap.Init(new string[] { });
 
             var comboMenu = new Menu("combo.settings", "Combo settings");

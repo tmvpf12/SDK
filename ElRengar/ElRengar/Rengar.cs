@@ -420,8 +420,6 @@
             if (target == null || !target.IsValidTarget())
                 return;
 
-            // Orbwalker.Orbwalk(target: target, position: Game.CursorPos);
-
             //Cast R on Player when selected target is in R range, Player needs to have 5 ferocity before ult is possible
             if (spells[Spells.R].IsReady() && spells[Spells.E].IsReady() && Player.Distance(target) <= spells[Spells.R].Range && Felicity == 5)
             {
@@ -468,7 +466,6 @@
                 return;
             }
 
-            //Orbwalker.Orbwalk(target: target, position: Game.CursorPos);
 
             //Cast R on Player when selected target is in R range, Player needs to have 5 ferocity before ult is possible
             if (spells[Spells.R].IsReady() && spells[Spells.Q].IsReady()  && Player.Distance(target) <= spells[Spells.R].Range && Felicity == 5)
