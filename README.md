@@ -3,7 +3,8 @@ My old assemblies converted to the new SDK.
 
 #Working on:
 
-- Rengar (kappa%)
+- Rengar 
+- ElFunHouse Alistar
 
 #Finished:
 
