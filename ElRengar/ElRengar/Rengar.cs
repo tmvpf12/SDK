@@ -120,8 +120,6 @@
             var useEoutOfRange = menu["combo.settings"]["combo.spell.e.outofrange"].GetValue<MenuBool>().Value;
             var prioritized = menu["combo.settings"]["combo.prioritize"].GetValue<MenuList>();
 
-            Orbwalker.Orbwalk(target: target, position: Game.CursorPos);
-
             if (Felicity <= 4)
             {
                 if (useQ && spells[Spells.Q].IsReady() && Player.Distance(target) < spells[Spells.Q].Range)
