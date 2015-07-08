@@ -37,7 +37,7 @@ namespace ElFunHouse.Champions.Fiora
         public static void Load()
         {
             menu = new Menu("FunHouse Fiora", "FunHouse Fiora", true);
-            Bootstrap.Init(new string[] { });
+            LeagueSharp.SDK.Core.Bootstrap.Init(null); //This will be a loader functionality later on
 
             var comboMenu = new Menu("combo.settings", "Combo settings");
             {
