@@ -90,6 +90,15 @@ namespace ElRengar.Config
             }
         }
 
+        public static bool RengarQbuffMax //riot is retarded lmao kappahd 
+        {
+            get
+            {
+                return Player.HasBuff("RengarQbuffMAX");
+            }
+        }
+
+        //
         public static bool Rengartrophyicon6 //riot is retarded lmao kappahd 
         {
             get
@@ -133,14 +142,17 @@ namespace ElRengar.Config
             /*if (Items.CanUseItem(3074)) Items.UseItem(3074); //Hydra
             if (Items.CanUseItem(3077)) Items.UseItem(3077); //Tiamat*/
 
+            //Cutlass = new Items.Item(3144, 450f);
+           // Botrk = new Items.Item(3153, 450f);
+
             if (Items.CanUseItem(3144)) Items.UseItem(3144); //Cutlass
             if (Items.CanUseItem(3153)) Items.UseItem(3153); //Botrk
             if (Items.CanUseItem(3142)) Items.UseItem(3142); //Ghostblade 
-            
 
-            /*if (Player.Distance(target.ServerPosition) <= Cutlass.Range && Cutlass.IsReady && Cutlass.IsOwned() 
-                || Player.Distance(target.ServerPosition) <= Botrk.Range && Botrk.IsReady && Cutlass.IsOwned())
-                Cutlass.Cast(target); Botrk.Cast(target);*/
+            /*new Items.Item(3144, 450f).Cast(target);
+            new Items.Item(3153, 450f).Cast(target);*/
+
+            Console.WriteLine("Casted");
         }
 
         protected static void NotificationHandler()
@@ -171,7 +183,7 @@ namespace ElRengar.Config
                 comboMenu.Add(new MenuSeparator("Prioritized", "Prioritized"));
                 comboMenu.Add(new MenuList<string>("combo.prioritize", "Prioritized spell", new[] { "Q", "W", "E" }));
                 comboMenu.Add(new MenuSeparator("God modes", "God modes"));
-                comboMenu.Add(new MenuKeyBind("combo.spell.triple.q", "Triple Q", Keys.T, KeyBindType.Press));
+                comboMenu.Add(new MenuKeyBind("combo.spell.triple.q", "Triple Q", Keys.I, KeyBindType.Press));
                 comboMenu.Add(new MenuKeyBind("combo.spell.triple.e", "Triple E", Keys.U, KeyBindType.Press));
 
                 menu.Add(comboMenu);
@@ -219,8 +231,6 @@ namespace ElRengar.Config
                 menu.Add(jungleClearMenu);
             }
 
-            //healMenu.AddItem(new MenuItem("ElRengar.Heal.AutoHeal", "Auto heal yourself").SetValue(true));
-            //healMenu.AddItem(new MenuItem("ElRengar.Heal.HP", "Self heal at >= ").SetValue(new Slider(25, 1, 100)));
             var healMenu = new Menu("heal.settings", "Heal settings");
             {
                 healMenu.Add(new MenuSeparator("General", "General"));
@@ -248,6 +258,8 @@ namespace ElRengar.Config
                 miscMenu.Add(new MenuBool("misc.drawing.draw.spell.w", "W range", true));
                 miscMenu.Add(new MenuBool("misc.drawing.draw.spell.e", "E range", true));
                 miscMenu.Add(new MenuBool("misc.drawing.draw.spell.r", "R range", true));
+                miscMenu.Add(new MenuBool("misc.drawing.draw.helper.canjump", "Jump helper", true));
+
 
                 miscMenu.Add(new MenuSeparator("Debug", "Debug"));
                 miscMenu.Add(new MenuBool("misc.debug.active", "Debug", false));

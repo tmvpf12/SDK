@@ -44,8 +44,6 @@
             }
             try
             {
-                //Cutlass = new Items.Item(3144, 450f);
-                //Botrk = new Items.Item(3153, 450f);
                 spells[Spells.E].SetSkillshot(0.25f, 70f, 1500f, true, SkillshotType.SkillshotLine);
 
                 CreateMenu();
@@ -89,6 +87,7 @@
                     break;
             }
 
+            //Console.WriteLine("Buffs: {0}", string.Join(" | ", Player.Buffs.Select(b => b.DisplayName)));
             NotificationHandler();
             HealHandler();
 
@@ -134,7 +133,7 @@
                     spells[Spells.W].Cast();
                 }
 
-                if (useE && spells[Spells.E].IsReady() && Player.Distance(target.ServerPosition) < spells[Spells.E].Range)
+                if (useE && spells[Spells.E].IsReady() && !Player.IsDashing() && Player.Distance(target.ServerPosition) < spells[Spells.E].Range)
                 {
                     spells[Spells.E].Cast(target);
                 }
@@ -416,6 +415,8 @@
 
         private static void TripleEHandler()
         {
+            Orbwalker.Orbwalk();
+
             var target = TargetSelector.GetTarget(spells[Spells.R].Range);
             if (target == null || !target.IsValidTarget())
                 return;
@@ -430,7 +431,7 @@
             if (spells[Spells.E].IsReady() && Felicity == 5 && RengarR && Player.Distance(target) <= spells[Spells.E].Range)
             {
                 //Cast the empowered E to target
-                spells[Spells.E].Cast(target);
+                DelayAction.Add(1500, () => spells[Spells.E].Cast(target));
             }
 
             //After the first E snare we cast E again, mid jump
@@ -460,6 +461,9 @@
 
         private static void TripleQHandler()
         {
+
+            Orbwalker.Orbwalk();
+
             var target = TargetSelector.GetTarget(spells[Spells.R].Range);
             if (target == null || !target.IsValidTarget())
             {
@@ -517,8 +521,6 @@
             var useW = menu["heal.settings"]["heal.activated"].GetValue<MenuBool>().Value;
             var playerHealth = menu["heal.settings"]["heal.player.hp"].GetValue<MenuSlider>().Value;
 
-            Console.WriteLine(playerHealth);
-
             if (useW && (Player.Health / Player.MaxHealth) * 100 <= playerHealth && spells[Spells.W].IsReady())
             {
                 spells[Spells.W].Cast();
@@ -557,6 +559,18 @@
             var drawW = menu["misc.settings"]["misc.drawing.draw.spell.w"].GetValue<MenuBool>().Value;
             var drawE = menu["misc.settings"]["misc.drawing.draw.spell.e"].GetValue<MenuBool>().Value;
             var drawR = menu["misc.settings"]["misc.drawing.draw.spell.r"].GetValue<MenuBool>().Value;
+            var canJump = menu["misc.settings"]["misc.drawing.draw.helper.canjump"].GetValue<MenuBool>().Value;
+
+            var target = TargetSelector.GetTarget(spells[Spells.E].Range);
+            if (target == null || !target.IsValidTarget())
+            {
+                return;
+            }
+
+            if (HasPassive && canJump)
+            {
+                Drawing.DrawText(target.HPBarPosition.X + 40, target.HPBarPosition.Y - 5, Color.Green, "Can jump");
+            }
 
             if (drawNone) return;
 

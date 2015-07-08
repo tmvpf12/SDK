@@ -65,6 +65,7 @@
     <Compile Include="Champions\Katarina\Katarina.cs" />
     <Compile Include="Champions\Malphite\Malphite.cs" />
     <Compile Include="Champions\Nasus\Nasus.cs" />
+    <Compile Include="Champions\Nunu\CreateMenu.cs" />
     <Compile Include="Champions\Nunu\Nunu.cs" />
     <Compile Include="Champions\Ryze\Ryze.cs" />
     <Compile Include="Config\Standards.cs" />
