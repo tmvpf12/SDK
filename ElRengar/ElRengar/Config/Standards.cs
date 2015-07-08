@@ -168,7 +168,8 @@ namespace ElRengar.Config
         protected static void CreateMenu()
         {
             menu = new Menu("ElRengar", "ElRengar", true);
-            Bootstrap.Init(new string[] { }); //blabla
+            //This will be a loader functionality later on
+            Bootstrap.Init(null); 
 
             var comboMenu = new Menu("combo.settings", "Combo settings");
             {
