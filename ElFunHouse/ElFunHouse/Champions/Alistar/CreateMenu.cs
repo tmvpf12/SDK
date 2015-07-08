@@ -22,7 +22,7 @@ namespace ElFunHouse.Champions.Alistar
         public static void Load()
         {
             menu = new Menu("FunHouse Alistar", "FunHouse Alistar", true);
-            Bootstrap.Init(new string[] { });
+            LeagueSharp.SDK.Core.Bootstrap.Init(null); //This will be a loader functionality later on
 
             var comboMenu = new Menu("combo.settings", "Combo settings");
             {
