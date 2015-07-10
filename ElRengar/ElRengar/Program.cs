@@ -12,17 +12,14 @@
 
         private static void Main(string[] args)
         {
-            if (args != null)
+            try
             {
-                try
-                {
-                    Load.OnLoad += Rengar.OnLoad;
-                    Console.WriteLine("Rengar loaded.");
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex);
-                }
+                Load.OnLoad += Rengar.OnLoad;
+                Console.WriteLine("Rengar loaded.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
             }
         }
 
