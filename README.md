@@ -1,1 +1,1 @@
-# MOVED to GoS
+#l0rd
