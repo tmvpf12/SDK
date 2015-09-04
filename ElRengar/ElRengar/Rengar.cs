@@ -23,6 +23,7 @@
     {
         #region Static Fields
 
+        protected static int LastSwitch;
         public static Dictionary<Spells, Spell> spells = new Dictionary<Spells, Spell>()
         {
             { Spells.Q, new Spell(SpellSlot.Q, 250) },
@@ -91,16 +92,6 @@
             NotificationHandler();
             HealHandler();
 
-            // blablabla will fix this later
-            if(menu["combo.settings"]["combo.spell.triple.q"].GetValue<MenuKeyBind>().Active)
-            {
-                TripleQHandler();
-            }
-
-            if (menu["combo.settings"]["combo.spell.triple.e"].GetValue<MenuKeyBind>().Active)
-            {
-                TripleEHandler();
-            }
         }
 
         #region Methods
@@ -158,14 +149,7 @@
                         }
                         break;
 
-                    case 1:
-                        if (useW && spells[Spells.W].IsReady() && Vector3.Distance(Player.ServerPosition, target.ServerPosition) < spells[Spells.W].Range * 0x1 / 0x3 && !RengarR)
-                        {
-                            spells[Spells.W].Cast();
-                        }
-                      
-                        break;
-
+   
                     case 2:
                         if (useE && spells[Spells.E].IsReady() && Player.Distance(target.ServerPosition) < spells[Spells.E].Range && !RengarR)
                         {
@@ -411,106 +395,6 @@
         private static void DoLastHit()
         {
           
-        }
-
-        private static void TripleEHandler()
-        {
-            Orbwalker.Orbwalk();
-
-            var target = TargetSelector.GetTarget(spells[Spells.R].Range);
-            if (target == null || !target.IsValidTarget())
-                return;
-
-            //Cast R on Player when selected target is in R range, Player needs to have 5 ferocity before ult is possible
-            if (spells[Spells.R].IsReady() && spells[Spells.E].IsReady() && Player.Distance(target) <= spells[Spells.R].Range && Felicity == 5)
-            {
-                spells[Spells.R].Cast();
-            }
-
-            //Check if Player is in R and if Player has 5 ferocity
-            if (spells[Spells.E].IsReady() && Felicity == 5 && RengarR && Player.Distance(target) <= spells[Spells.E].Range)
-            {
-                //Cast the empowered E to target
-                DelayAction.Add(1500, () => spells[Spells.E].Cast(target));
-            }
-
-            //After the first E snare we cast E again, mid jump
-            if (spells[Spells.E].IsReady() && Player.IsDashing() && Felicity <= 4 && !RengarR && Player.Distance(target) <= spells[Spells.E].Range)
-            {
-                spells[Spells.E].Cast(target);
-            }
-
-            //After we land we cast W
-            if (spells[Spells.W].IsReady() && Vector3.Distance(Player.ServerPosition, target.ServerPosition) < spells[Spells.W].Range * 0x1 / 0x3)
-            {
-                spells[Spells.W].Cast();
-            }
-
-            //After W we cast Q so we have 5 stacks again
-            if (spells[Spells.Q].IsReady() && !RengarR && Player.Distance(target) <= spells[Spells.Q].Range)
-            {
-                spells[Spells.Q].Cast();
-            }
-
-            //After Q cast we have 5 ferocity to cast a snare again.
-            if (spells[Spells.E].IsReady() && Felicity == 5 && !RengarR && Player.Distance(target) <= spells[Spells.E].Range)
-            {
-                spells[Spells.E].Cast(target);
-            }
-        }
-
-        private static void TripleQHandler()
-        {
-
-            Orbwalker.Orbwalk();
-
-            var target = TargetSelector.GetTarget(spells[Spells.R].Range);
-            if (target == null || !target.IsValidTarget())
-            {
-                return;
-            }
-
-
-            //Cast R on Player when selected target is in R range, Player needs to have 5 ferocity before ult is possible
-            if (spells[Spells.R].IsReady() && spells[Spells.Q].IsReady()  && Player.Distance(target) <= spells[Spells.R].Range && Felicity == 5)
-            {
-                spells[Spells.R].Cast();
-            }
-
-            //Check if Player is in R and if Player has 5 ferocity
-            if (spells[Spells.Q].IsReady() && Felicity == 5 && RengarR
-                && Player.Distance(target) <= spells[Spells.W].Range)
-            {
-                spells[Spells.Q].Cast();
-            }
-
-            if (spells[Spells.Q].IsReady() && Felicity == 5 && !RengarR
-                && Player.Distance(target) <= spells[Spells.W].Range)
-            {
-                spells[Spells.Q].Cast();
-            }
-
-            //Q is casted, Player should have 3 Ferocity by now.
-            if (Felicity <= 4)
-            {
-                if (spells[Spells.Q].IsReady())
-                {
-                    spells[Spells.Q].Cast();
-                }
-
-                if (spells[Spells.W].IsReady()
-                    && Vector3.Distance(Player.ServerPosition, target.ServerPosition)
-                    < spells[Spells.W].Range * 0x1 / 0x3)
-                {
-                    spells[Spells.W].Cast();
-                }
-
-                if (spells[Spells.E].IsReady() && Player.Distance(target) <= spells[Spells.E].Range)
-                {
-                    //waiting for prediction
-                    spells[Spells.E].Cast(target);
-                }
-            }
         }
 
         private static void HealHandler()

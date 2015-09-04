@@ -182,10 +182,12 @@ namespace ElRengar.Config
                 comboMenu.Add(new MenuBool("combo.spell.ignite", "Use ignite", true));
                 comboMenu.Add(new MenuBool("combo.spell.smite", "Use smite", true));
                 comboMenu.Add(new MenuSeparator("Prioritized", "Prioritized"));
-                comboMenu.Add(new MenuList<string>("combo.prioritize", "Prioritized spell", new[] { "Q", "W", "E" }));
-                comboMenu.Add(new MenuSeparator("God modes", "God modes"));
-                comboMenu.Add(new MenuKeyBind("combo.spell.triple.q", "Triple Q", Keys.I, KeyBindType.Press));
-                comboMenu.Add(new MenuKeyBind("combo.spell.triple.e", "Triple E", Keys.U, KeyBindType.Press));
+                //comboMenu.Add(new MenuList<string>("combo.prioritize", "Prioritized spell", new[] { "Q", "E" }));
+
+                comboMenu.Add(new MenuList<string>("combo.prioritize", "Prioritized spell", new[] { "Q", "E" })
+                {
+                    SelectedValue = "Q"
+                });
 
                 menu.Add(comboMenu);
             }
