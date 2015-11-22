@@ -38,11 +38,11 @@
 
         public static void OnLoad(object sender, EventArgs e)
         {
-            if (Player.CharData.BaseSkinName != "Rengar")
+            /*if (Player.CharData.BaseSkinName != "Rengar")
             {
                 Console.WriteLine("Champion is not supported.");
                 return;
-            }
+            }*/
             try
             {
                 spells[Spells.E].SetSkillshot(0.25f, 70f, 1500f, true, SkillshotType.SkillshotLine);
